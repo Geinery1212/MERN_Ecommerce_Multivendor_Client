@@ -116,12 +116,12 @@ before:bg-[#afafaf] before:-left-[20px]'>
                                 <ul className='flex justify-start items-start gap-8 text-sm font-bold
                             uppercase md-lg:hidden'>
                                     <li>
-                                        <Link className={`p-2 block ${pathname === '/' ? 'text-[#059473]'
+                                        <Link to={'/'} className={`p-2 block ${pathname === '/' ? 'text-[#059473]'
                                             : 'text-slate-600'
                                             }`}>Home</Link>
                                     </li>
                                     <li>
-                                        <Link className={`p-2 block ${pathname === '/shop' ? 'text-[#059473]'
+                                        <Link to={'/shop'} className={`p-2 block ${pathname === '/shop' ? 'text-[#059473]'
                                             : 'text-slate-600'
                                             }`}>Shop</Link>
                                     </li>
@@ -218,7 +218,7 @@ after:bg-[#afafaf] after:-right-[16px]'>
                                                 }`}>Home</Link>
                                         </li>
                                         <li>
-                                            <Link className={`py-2 block ${pathname === '/shop' ? 'text-[#059473]'
+                                            <Link to={'/shop'} className={`py-2 block ${pathname === '/shop' ? 'text-[#059473]'
                                                 : 'text-slate-600'
                                                 }`}>Shop</Link>
                                         </li>
