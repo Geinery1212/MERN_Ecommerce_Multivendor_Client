@@ -1,7 +1,7 @@
 import React from 'react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { IoIosArrowForward } from "react-icons/io";
 import banner from '../assets/images/banner/shop.png'
 import imageProduct1 from '../assets/images/products/1.webp'
@@ -12,10 +12,23 @@ import imageProduct5 from '../assets/images/products/5.webp'
 import imageProduct6 from '../assets/images/products/6.webp'
 import imageProduct7 from '../assets/images/products/7.webp'
 import imageProduct8 from '../assets/images/products/8.webp'
+import Shipping from './Shipping';
 const productImages = [imageProduct1, imageProduct2, imageProduct3, imageProduct4, imageProduct5, imageProduct6, imageProduct7, imageProduct8]
 const Cart = () => {
+    const navigate = useNavigate();
     const cart_products = [1, 2];
     const out_of_stock = [1, 2];
+    const redirect = () => {
+        navigate('/shipping', {
+            state: {
+                products: [],
+                price: 100,
+                shipping_fee: 10,
+                items: 2
+            }
+        });
+    }
+
     return (
         <div>
             <Header />
@@ -164,7 +177,7 @@ const Cart = () => {
                                                     <span>Total</span>
                                                     <span className='text-lg text-[#059473]'>$291</span>
                                                 </div>
-                                                <button className='px-5 py-[6px] rounded-sm hover:shadow-red-500/50 hover:shadow-lg bg-red-500 text-sm
+                                                <button onClick={redirect} className='px-5 py-[6px] rounded-sm hover:shadow-red-500/50 hover:shadow-lg bg-red-500 text-sm
                                                     text-white uppercase'>
                                                     Process to Checkout
                                                 </button>
