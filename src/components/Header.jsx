@@ -6,7 +6,7 @@ import languagePng from '../assets/images/language.png'
 import logo from '../assets/images/logo.png';
 import { Link, useLocation } from 'react-router-dom'
 import { FaCartShopping } from 'react-icons/fa6'
-const Header = () => {
+const Header = ({categories}) => {
     const { pathname } = useLocation();
     const user = true;
     const [showSidebar, setShowSidebar] = useState(true);
@@ -15,23 +15,6 @@ const Header = () => {
     const [category, setCategory] = useState('');
     const wishlist_count = 1;
     const cart_count = 5;
-    const categories = [
-        'Technology',
-        'Health',
-        'Finance',
-        'Education',
-        'Entertainment',
-        'Travel',
-        'Food & Drink',
-        'Sports',
-        'Lifestyle',
-        'Science',
-        'Art & Culture',
-        'Business',
-        'Politics',
-        'Environment',
-        'Gaming'
-    ];
     return (
         <div className='w-full bg-white'>
             <div className='header-top bg-[#caddff] md-lg:hidden'>
@@ -281,13 +264,14 @@ after:bg-[#afafaf] after:-right-[16px]'>
                                     </div>
                                     <span className='pt-1'><IoIosArrowDown /></span>
                                 </div>
-                                <div className={`${categoryShow ? 'h-0' : 'h-[400px]'} overflow-hidden transition-all md-lg:relative duration-500
+                                <div className={`${categoryShow ? 'h-0' : 'auto'} max-h-[400px] overflow-hidden transition-all md-lg:relative duration-500
                                             absolute z-[9999] bg-[#dbf3ed] w-full border-x`}>
                                     <ul className='py-2 text-slate-600 font-medium'>
                                         {
-                                            categories.length > 0 && categories.map((element, index) => {
+                                            categories.length > 0 && categories.map((category, index) => {
                                                 return <li key={index} className='flex justify-start items-center gap-2 px-[24px] py-[6px]'>
-                                                    <Link className='text-sm block'>{element}</Link></li>
+                                                    <img src={category.image} alt="Category" className='w-[30px] h-[30px] rounded-full overflow-hidden' />
+                                                    <Link className='text-sm block'>{category.name}</Link></li>
                                             })
                                         }
                                     </ul>
@@ -302,8 +286,8 @@ after:bg-[#afafaf] after:-right-[16px]'>
                                             <select name="" id="" className='w-[150px] text-slate-600 font-semibold bg-transparent px-2 h-full outline-0 border-none' onChange={(e) => setCategory(e.target.value)}>
                                                 <option value="">Select Category</option>
                                                 {
-                                                    categories.length > 0 && categories.map((element, index) => {
-                                                        return <option value={element} key={index}>{element}</option>
+                                                    categories.length > 0 && categories.map((category, index) => {
+                                                        return <option value={category.name} key={index}>{category.name}</option>
                                                     })
                                                 }
                                             </select>
