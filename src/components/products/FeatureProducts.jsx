@@ -10,6 +10,7 @@ import imageProduct8 from '../../assets/images//products/8.webp'
 import { FaEye, FaRegHeart } from 'react-icons/fa'
 import { RiShoppingCartLine } from 'react-icons/ri'
 import Rating from '../Rating'
+import { Link } from 'react-router-dom'
 
 const productImages = [imageProduct1, imageProduct2, imageProduct3, imageProduct4, imageProduct5, imageProduct6, imageProduct7, imageProduct8]
 const FeatureProducts = () => {
@@ -40,7 +41,7 @@ hover:bg-[#059473] hover:text-white hover:rotate-[720deg] transition-all'>
                                     </li>
                                     <li className='w-[38px] h-[38px] cursor-pointer bg-white flex justify-center items-center rounded-full
 hover:bg-[#059473] hover:text-white hover:rotate-[720deg] transition-all'>
-                                        <FaEye />
+                                        <Link to={'/product/details/slug'}><FaEye /></Link>
                                     </li>
                                     <li className='w-[38px] h-[38px] cursor-pointer bg-white flex justify-center items-center rounded-full
 hover:bg-[#059473] hover:text-white hover:rotate-[720deg] transition-all'>

@@ -15,7 +15,7 @@ import categoryImg8 from '../assets/images//products/8.webp'
 const bannerImages = [categoryImg1, categoryImg2, categoryImg3, categoryImg4, categoryImg5, categoryImg6, categoryImg7, categoryImg8]
 
 const Categories = () => {
-    const responsive = {
+        const responsive = {
         superLargeDeskTop: {
             breakpoint: { max: 4000, min: 3000 },
             items: 6
