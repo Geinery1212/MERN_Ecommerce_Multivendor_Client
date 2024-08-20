@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import banner from '../assets/images/banner/shop.png'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { IoIosArrowForward } from "react-icons/io";
 import { Range } from 'react-range'
 import { AiFillStar } from 'react-icons/ai'
@@ -15,19 +15,23 @@ import Pagination from '../components/Pagination'
 import { useDispatch, useSelector } from 'react-redux'
 import { price_range_product, filter_products } from '../store/reducers/homeReducer'
 
-const Shop = () => {
+const SearchProduct = () => {
+    let [searchParams, setSearchParams] = useSearchParams();
+    const category = searchParams.get('category');
+    const searchValue = searchParams.get('searchValue');
+
     const dispatch = useDispatch();
 
-    const { products, totalProducts, categories, priceRange, latest_products } =
+    const { totalProducts, categories, priceRange, latest_products } =
         useSelector(state => state.home);
     const [filter, setFilter] = useState(true);
     const [range, setRange] = useState({ values: [priceRange.min, priceRange.max] });
     const [rating, setRating] = useState('');
     const [styles, setStyles] = useState('grid');
     const [perPage, setPerPage] = useState(12)
-    const [pageNumber, setPageNumber] = useState(1)
-    const [selectedCategory, setSelectedCategory] = useState('');
+    const [pageNumber, setPageNumber] = useState(1)    
     const [sortPrice, setSortPrice] = useState('');
+    
     useEffect(() => {
         dispatch(price_range_product());
     }, []);
@@ -38,25 +42,19 @@ const Shop = () => {
         }
     }, [priceRange]);
 
-    const queryCategory = (e, value) => {
-        if (e.target.checked) {
-            setSelectedCategory(value);
-        } else {
-            setSelectedCategory('');
-        }
-    }
     useEffect(() => {
         dispatch(filter_products(
             {
                 min: range.values[0],
                 max: range.values[1],
-                category: selectedCategory,
+                category: category,
                 rating,
                 sortPrice,
-                pageNumber
+                pageNumber,
+                searchValue
             }
         ))
-    }, [range.values[0], range.values[1], selectedCategory, rating, sortPrice, pageNumber]);
+    }, [range.values[0], range.values[1], category, rating, sortPrice, pageNumber, searchValue]);
 
     return (
         <div>
@@ -76,14 +74,14 @@ const Shop = () => {
                 <div className='absolute left-0 top-0 w-full h-full bg-[#2422228a]'>
                     <div className='w-[85%] md:w-[80%] sm:w-[90%] h-full mx-auto'>
                         <div className='flex flex-col justify-center gap-1 items-center h-full w-full text-white'>
-                            <h2 className='text-3xl font-bold'>Shop Page</h2>
+                            <h2 className='text-3xl font-bold'>Category Page</h2>
                             <div className='flex justify-center items-center gap-2 text-2xl w-full'>
                                 <div className='flex justify-center items-center gap-2 text-2xl w-full'>
                                     <Link to={'/'}>Home</Link>
                                     <span className='pt-1'>
                                         <IoIosArrowForward />
                                     </span>
-                                    <span>Shop</span>
+                                    <span>Category</span>
                                 </div>
                             </div>
                         </div>
@@ -98,19 +96,6 @@ const Shop = () => {
                     </div>
                     <div className='w-full flex flex-wrap'>
                         <div className={`w-3/12 md-lg:w-4/12 md:w-full pr-8 ${filter ? 'md:h-0 md:overflow-hidden md:mb-6' : 'md:h-auto md:overflow-auto md:mb-0'}`}>
-                            {/* Category */}
-                            <div className='py-2'>
-                                <h2 className='text-3xl font-bold mb-3 text-slate-600'>Category</h2>
-                                {
-                                    categories.map((category, index) => {
-                                        return <div className='flex justify-start items-center gap-2 py-1' key={index}>
-                                            <input checked={selectedCategory === category.name ? true : false} type="checkbox" id={category._id} onChange={(e) => queryCategory(e, category.name)
-                                            } />
-                                            <label htmlFor={category._id} className='text-slate-600 block cursor-pointer'>{category.name}</label>
-                                        </div>
-                                    })
-                                }
-                            </div>
                             {/* Price range */}
                             {(priceRange.min && priceRange.max && priceRange.min > 0 && priceRange.max > 0 && range.values[0] > 0 && range.values[1] > 0) && <div className='py-2 flex flex-col gap-5'>
                                 <h2 className='text-3xl font-bold mb-3 text-slate-600'>Price</h2>
@@ -229,4 +214,4 @@ cursor-pointer'>
     )
 }
 
-export default Shop
+export default SearchProduct

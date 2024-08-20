@@ -5,18 +5,18 @@ import { FaFacebookF, FaGoogle } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import loginImage from '../assets/images/login.jpg'
 const Login = () => {
-    const [formData, setFormData] = useState({        
+    const [formData, setFormData] = useState({
         email: '',
         password: ''
     });
 
-    const inputHandler = (e)=>{        
+    const inputHandler = (e) => {
         setFormData({
             ...formData,
             [e.target.name]: e.target.value
         })
     }
-    const login = (e)=>{
+    const login = (e) => {
         e.preventDefault();
         console.log(formData);
     }
@@ -25,12 +25,12 @@ const Login = () => {
             <Header />
             <div className='bg-slate-200 mt-4'>
                 <div className='w-full justify-center items-center p-10'>
-                    <div className='grid grid-cols-2 w-[60%] mx-auto bg-white rounded-md'>
+                    <div className='grid md-lg:grid-cols-1 grid-cols-2 sm:w-[100%] w-[60%] mx-auto bg-white rounded-md'>
                         {/*  Form*/}
                         <div className='px-8 py-8'>
                             <h2 className='text-center w-full text-xl text-slate-600 font-bold mb-4'>Login</h2>
                             <div>
-                                <form className='text-slate-600' onSubmit={login}>                                    
+                                <form className='text-slate-600' onSubmit={login}>
                                     <div className='flex flex-col gap-1 mb-2'>
                                         <label htmlFor="email">Email</label>
                                         <input type="email" name='email' id='email' value={formData.email} onChange={inputHandler} placeholder='Email' className='w-full px-3 py-2 border border-slate-200 outline-none focus:border-green-500 rounded-md' required />
@@ -61,7 +61,7 @@ const Login = () => {
                                 <p>You don´t have an account? <Link to={'/register'} className='text-blue-500'>Register</Link></p>
                             </div>
                         </div>
-                        <div className='w-full h-full py-4 pr-4'>
+                        <div className='w-full h-full py-4 md-lg:px-4 pr-4'>
                             <img src={loginImage} alt="" className='w-full h-full' />
                         </div>
                     </div>
