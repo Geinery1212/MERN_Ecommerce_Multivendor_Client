@@ -1,29 +1,56 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { FaFacebookF, FaGoogle } from 'react-icons/fa'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import loginImage from '../assets/images/login.jpg'
+import { useDispatch, useSelector } from 'react-redux'
+import toast from 'react-hot-toast'
+import { FadeLoader } from 'react-spinners';
+import { customer_register, messageClear } from '../store/reducers/authReducer'
 const Register = () => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { loader, errorMessage, successMessage } =
+        useSelector(state => state.auth);
     const [formData, setFormData] = useState({
         name: '',
         email: '',
         password: ''
     });
 
-    const inputHandler = (e)=>{        
+    const inputHandler = (e) => {
         setFormData({
             ...formData,
             [e.target.name]: e.target.value
         })
     }
-    const register = (e)=>{
+    const register = (e) => {
         e.preventDefault();
-        console.log(formData);
+        dispatch(customer_register(formData));
     }
+
+    useEffect(() => {
+        if (errorMessage) {
+            toast.error(errorMessage);
+            dispatch(messageClear());
+        }
+        if (successMessage) {
+            toast.success(successMessage);
+            dispatch(messageClear());
+            navigate('/');
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [successMessage, errorMessage]);
     return (
         <div>
             <Header />
+            {
+                loader && <div className='w-screen h-screen flex justify-center
+                items-center fixed left-0 top-0 bg-[#38303033] z-[999]'>
+                    <FadeLoader />
+                </div>
+            }
             <div className='bg-slate-200 mt-4'>
                 <div className='w-full justify-center items-center p-10'>
                     <div className='grid grid-cols-2 w-[60%] mx-auto bg-white rounded-md'>

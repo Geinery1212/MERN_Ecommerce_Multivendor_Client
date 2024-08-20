@@ -6,7 +6,7 @@ export const get_categories = createAsyncThunk(
     'home/get_categories',
     async (_, { rejectWithValue, fulfillWithValue }) => {
         try {
-            const { data } = await api.get(`/client/get-categories`);
+            const { data } = await api.get(`/customer/get-categories`);
 
             // console.log(data);
             return fulfillWithValue(data);
@@ -21,7 +21,7 @@ export const get_products = createAsyncThunk(
     'home/get_products',
     async (_, { rejectWithValue, fulfillWithValue }) => {
         try {
-            const { data } = await api.get(`/client/get-products`);
+            const { data } = await api.get(`/customer/get-products`);
 
             // console.log(data);
             return fulfillWithValue(data);
@@ -36,7 +36,7 @@ export const price_range_product = createAsyncThunk(
     'home/price_range_product',
     async (_, { rejectWithValue, fulfillWithValue }) => {
         try {
-            const { data } = await api.get(`/client/price-range-product`);
+            const { data } = await api.get(`/customer/price-range-product`);
             // console.log(data);
             return fulfillWithValue(data);
         } catch (error) {
@@ -59,7 +59,7 @@ export const filter_products = createAsyncThunk(
                 pageNumber,
                 searchValue
             } = query;
-            const { data } = await api.get(`/client/filter-products?min=${min}&max=${max}&category=${category}&rating=${rating}&sortPrice=${sortPrice}&pageNumber=${pageNumber}&searchValue=${searchValue ? searchValue : ''}`);
+            const { data } = await api.get(`/customer/filter-products?min=${min}&max=${max}&category=${category}&rating=${rating}&sortPrice=${sortPrice}&pageNumber=${pageNumber}&searchValue=${searchValue ? searchValue : ''}`);
             // console.log(data);
             return fulfillWithValue(data);
         } catch (error) {

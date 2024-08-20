@@ -2,13 +2,14 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../../api/api";
 // import { jwtDecode } from 'jwt-decode';
 //asynchronous aperations
-export const client_register = createAsyncThunk(
-    'auth/client_register',
+export const customer_register = createAsyncThunk(
+    'auth/customer_register',
     async (info, { rejectWithValue, fulfillWithValue }) => {
         try {
-            // console.log(info);
-            const { data } = await api.post('/client/register', info, { withCredentials: true });
-            localStorage.setItem('clientToken', data.token);
+            console.log(info);
+            // await new Promise(resolve => setTimeout(resolve, 2000));
+            const { data } = await api.post('/customer/register', info, { withCredentials: true });
+            localStorage.setItem('customerToken', data.token);
             // console.log(data);
             return fulfillWithValue(data);
         } catch (error) {
@@ -66,16 +67,15 @@ export const authReducer = createSlice({
     extraReducers: (builder) => {
         builder
 
-            .addCase(client_register.pending, (state, { payload }) => {
+            .addCase(customer_register.pending, (state, { payload }) => {
                 state.loader = true;
-            }).addCase(client_register.rejected, (state, { payload }) => {
+            }).addCase(customer_register.rejected, (state, { payload }) => {
                 state.loader = false;
                 state.errorMessage = payload.error;
-            }).addCase(client_register.fulfilled, (state, { payload }) => {
+            }).addCase(customer_register.fulfilled, (state, { payload }) => {
                 state.loader = false;
                 state.successMessage = payload.message;
-                state.token = payload.token;
-                state.role = returnRole(payload.token);
+                state.token = payload.token;       
             })
 
             .addCase(seller_login.pending, (state, { payload }) => {
@@ -87,7 +87,6 @@ export const authReducer = createSlice({
                 state.loader = false;
                 state.successMessage = payload.message;
                 state.token = payload.token;
-                state.role = returnRole(payload.token);
             })
     }
 });
