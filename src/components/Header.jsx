@@ -11,14 +11,16 @@ const Header = () => {
     const navigate = useNavigate();
     const { categories } =
         useSelector(state => state.home);
+    const { userInfo } =
+        useSelector(state => state.auth);
     const { pathname } = useLocation();
-    const user = true;
     const [showSidebar, setShowSidebar] = useState(true);
     const [categoryShow, setCategoryShow] = useState(true);
     const [searchValue, setSearchValue] = useState('');
     const [category, setCategory] = useState('');
     const wishlist_count = 1;
     const cart_count = 5;
+    
     const search = (e) => {
         navigate(`/products/search?searchValue=${searchValue}&category=${category}`)
     }
@@ -65,10 +67,10 @@ before:bg-[#afafaf] before:-left-[20px]'>
                                     </ul>
                                 </div>
                                 {
-                                    !user ?
+                                    userInfo ?
                                         <Link className='flex cursor-pointer justify-center items-center gap-2 text-sm text-black' to={'/dashboard'}>
                                             <span><FaUser /></span>
-                                            <span>Ervin Diaz</span>
+                                            <span>{userInfo.name}</span>                                            
                                         </Link>
                                         : <Link to={'/login'} className='flex cursor-pointer justify-center items-center gap-2 text-sm text-black'>
                                             <span><FaLock /></span>
@@ -188,10 +190,10 @@ after:bg-[#afafaf] after:-right-[16px]'>
                                             </ul>
                                         </div>
                                         {
-                                            !user ?
+                                            userInfo ?
                                                 <Link className='flex cursor-pointer justify-center items-center gap-2 text-sm text-black' to={'/dashboard'}>
                                                     <span><FaUser /></span>
-                                                    <span>Ervin Diaz</span>
+                                                    <span>{userInfo.name}</span>
                                                 </Link>
                                                 : <Link className='flex cursor-pointer justify-center items-center gap-2 text-sm text-black' to={'/dashboard'}>
                                                     <span><FaLock /></span>

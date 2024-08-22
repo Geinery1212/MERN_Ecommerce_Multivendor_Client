@@ -11,7 +11,7 @@ import { customer_register, messageClear } from '../store/reducers/authReducer'
 const Register = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { loader, errorMessage, successMessage } =
+    const { loader, errorMessage, successMessage, userInfo } =
         useSelector(state => state.auth);
     const [formData, setFormData] = useState({
         name: '',
@@ -37,7 +37,9 @@ const Register = () => {
         }
         if (successMessage) {
             toast.success(successMessage);
-            dispatch(messageClear());
+            dispatch(messageClear());            
+        }
+        if(userInfo){
             navigate('/');
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps

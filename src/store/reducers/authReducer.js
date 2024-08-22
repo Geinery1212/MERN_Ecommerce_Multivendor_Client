@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../../api/api";
-// import { jwtDecode } from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 //asynchronous aperations
 export const customer_register = createAsyncThunk(
     'auth/customer_register',
@@ -18,13 +18,13 @@ export const customer_register = createAsyncThunk(
         }
     }
 );
-export const seller_login = createAsyncThunk(
-    'auth/seller_login',
+export const customer_login = createAsyncThunk(
+    'auth/customer_login',
     async (info, { rejectWithValue, fulfillWithValue }) => {
-        // console.log(info);
+        console.log(info);
         try {
-            const { data } = await api.post('/seller-login', info, { withCredentials: true });
-            localStorage.setItem('accessToken', data.token);
+            const { data } = await api.post('/customer/login', info, { withCredentials: true });
+            localStorage.setItem('customerToken', data.token);
             return fulfillWithValue(data);
         } catch (error) {
             console.error(error);
@@ -34,15 +34,14 @@ export const seller_login = createAsyncThunk(
 );
 
 
-const returnRole = (token) => {
+const decodeToken = (token) => {
     if (token) {
-        // const decodeToken = jwtDecode(token);
-        const decodeToken = token;
+        const decodeToken = jwtDecode(token);
         const expireTime = new Date(decodeToken.exp * 1000);
         if (new Date() > expireTime) {
-            localStorage.removeItem('accessToken');
+            localStorage.removeItem('customerToken');
         } else {
-            return decodeToken.role;
+            return decodeToken;
         }
     } else {
         return '';
@@ -54,9 +53,8 @@ export const authReducer = createSlice({
         successMessage: '',
         errorMessage: '',
         loader: false,
-        userInfo: '',
-        role: returnRole(localStorage.getItem('accessToken')),
-        token: localStorage.getItem('accessToken')
+        userInfo: decodeToken(localStorage.getItem('customerToken')),
+        token: localStorage.getItem('customerToken')
     },
     reducers: {
         messageClear: (state, _) => {
@@ -73,20 +71,24 @@ export const authReducer = createSlice({
                 state.loader = false;
                 state.errorMessage = payload.error;
             }).addCase(customer_register.fulfilled, (state, { payload }) => {
-                state.loader = false;
-                state.successMessage = payload.message;
-                state.token = payload.token;       
-            })
-
-            .addCase(seller_login.pending, (state, { payload }) => {
-                state.loader = true;
-            }).addCase(seller_login.rejected, (state, { payload }) => {
-                state.loader = false;
-                state.errorMessage = payload.error;
-            }).addCase(seller_login.fulfilled, (state, { payload }) => {
+                const userInfo = decodeToken(payload.token);
                 state.loader = false;
                 state.successMessage = payload.message;
                 state.token = payload.token;
+                state.userInfo = userInfo;
+            })
+
+            .addCase(customer_login.pending, (state, { payload }) => {
+                state.loader = true;
+            }).addCase(customer_login.rejected, (state, { payload }) => {
+                state.loader = false;
+                state.errorMessage = payload.error;
+            }).addCase(customer_login.fulfilled, (state, { payload }) => {
+                const userInfo = decodeToken(payload.token);
+                state.loader = false;
+                state.successMessage = payload.message;
+                state.token = payload.token;
+                state.userInfo = userInfo;
             })
     }
 });
