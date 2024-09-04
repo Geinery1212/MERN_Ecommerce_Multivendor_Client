@@ -3,7 +3,9 @@ import { FaEye, FaRegHeart } from 'react-icons/fa';
 import { RiShoppingCartLine } from 'react-icons/ri';
 import Rating from '../Rating';
 import { useSelector } from 'react-redux';
+import MyMoney from '../../utilities/MyMoney';
 const ShopProducts = ({ styles }) => {
+    const formatter = new MyMoney();
     const { products } =
         useSelector(state => state.home);
     return (
@@ -30,7 +32,7 @@ const ShopProducts = ({ styles }) => {
                     <div className='flex flex-col justify-start items-start gap-1 w-full overflow-hidden'>
                         <h2 className='font-bold w-full overflow-hidden text-ellipsis whitespace-wrap'>{product.name}</h2>
                         <div className='flex justify-start items-center gap-3'>
-                            <span className='text-md font-semibold'>${product.price}</span>
+                            <span className='text-md font-semibold'>{formatter.centsToCurrency(product.price)}</span>
                             <div className='flex'>
                                 <Rating ratings={product.rating} />
                             </div>

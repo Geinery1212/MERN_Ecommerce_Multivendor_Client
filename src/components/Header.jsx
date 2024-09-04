@@ -13,16 +13,24 @@ const Header = () => {
         useSelector(state => state.home);
     const { userInfo } =
         useSelector(state => state.auth);
+    const { cart_products_count } =
+        useSelector(state => state.cart);
     const { pathname } = useLocation();
     const [showSidebar, setShowSidebar] = useState(true);
     const [categoryShow, setCategoryShow] = useState(true);
     const [searchValue, setSearchValue] = useState('');
     const [category, setCategory] = useState('');
     const wishlist_count = 1;
-    const cart_count = 5;
-    
+
     const search = (e) => {
         navigate(`/products/search?searchValue=${searchValue}&category=${category}`)
+    }
+    const redirect_to_cart = () => {
+        if (userInfo) {
+            navigate('/cart')
+        } else {
+            navigate('/login')
+        }
     }
     return (
         <div className='w-full bg-white'>
@@ -70,7 +78,7 @@ before:bg-[#afafaf] before:-left-[20px]'>
                                     userInfo ?
                                         <Link className='flex cursor-pointer justify-center items-center gap-2 text-sm text-black' to={'/dashboard'}>
                                             <span><FaUser /></span>
-                                            <span>{userInfo.name}</span>                                            
+                                            <span>{userInfo.name}</span>
                                         </Link>
                                         : <Link to={'/login'} className='flex cursor-pointer justify-center items-center gap-2 text-sm text-black'>
                                             <span><FaLock /></span>
@@ -146,15 +154,19 @@ before:bg-[#afafaf] before:-left-[20px]'>
                                                 }
                                             </div>
                                         </div>
-                                        <div className='relative flex justify-center items-center
+                                        <div onClick={redirect_to_cart} className='relative flex justify-center items-center
                                             cursor-pointer w-[35px] h-[35px] rounded-full bg-[#e2e2e2]'>
                                             <span className='text-xl text-green-500'><FaCartShopping /></span>
-                                            <div className='w-[20px] h-[20px] absolute bg-red-500 rounded-full
-                                            text-white flex justify-center items-center -top-[3px] -right-[5px]'>
-                                                {
-                                                    cart_count
-                                                }
-                                            </div>
+
+                                            {
+                                                cart_products_count !== 0 && <div className='w-[20px] h-[20px] absolute bg-red-500 rounded-full
+                                                    text-white flex justify-center items-center -top-[3px] -right-[5px]'>
+                                                    {
+                                                        cart_products_count
+                                                    }
+                                                </div>
+                                            }
+
                                         </div>
                                     </div>
                                 </div>

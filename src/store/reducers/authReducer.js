@@ -9,7 +9,7 @@ export const customer_register = createAsyncThunk(
             console.log(info);
             // await new Promise(resolve => setTimeout(resolve, 2000));
             const { data } = await api.post('/customer/register', info, { withCredentials: true });
-            localStorage.setItem('customerToken', data.token);
+            localStorage.setItem('accessToken', data.token);
             // console.log(data);
             return fulfillWithValue(data);
         } catch (error) {
@@ -24,7 +24,7 @@ export const customer_login = createAsyncThunk(
         console.log(info);
         try {
             const { data } = await api.post('/customer/login', info, { withCredentials: true });
-            localStorage.setItem('customerToken', data.token);
+            localStorage.setItem('accessToken', data.token);
             return fulfillWithValue(data);
         } catch (error) {
             console.error(error);
@@ -39,7 +39,7 @@ const decodeToken = (token) => {
         const decodeToken = jwtDecode(token);
         const expireTime = new Date(decodeToken.exp * 1000);
         if (new Date() > expireTime) {
-            localStorage.removeItem('customerToken');
+            localStorage.removeItem('accessToken');
         } else {
             return decodeToken;
         }
@@ -53,8 +53,8 @@ export const authReducer = createSlice({
         successMessage: '',
         errorMessage: '',
         loader: false,
-        userInfo: decodeToken(localStorage.getItem('customerToken')),
-        token: localStorage.getItem('customerToken')
+        userInfo: decodeToken(localStorage.getItem('accessToken')),
+        token: localStorage.getItem('accessToken')
     },
     reducers: {
         messageClear: (state, _) => {

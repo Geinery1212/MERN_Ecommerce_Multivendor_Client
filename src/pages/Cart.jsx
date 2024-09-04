@@ -1,24 +1,33 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { Link, useNavigate } from 'react-router-dom'
 import { IoIosArrowForward } from "react-icons/io";
 import banner from '../assets/images/banner/shop.png'
-import imageProduct1 from '../assets/images/products/1.webp'
-import imageProduct2 from '../assets/images/products/2.webp'
-import imageProduct3 from '../assets/images/products/3.webp'
-import imageProduct4 from '../assets/images/products/4.webp'
-import imageProduct5 from '../assets/images/products/5.webp'
-import imageProduct6 from '../assets/images/products/6.webp'
-import imageProduct7 from '../assets/images/products/7.webp'
-import imageProduct8 from '../assets/images/products/8.webp'
-import Shipping from './Shipping';
-const productImages = [imageProduct1, imageProduct2, imageProduct3, imageProduct4, imageProduct5, imageProduct6, imageProduct7, imageProduct8]
+import { useDispatch, useSelector } from 'react-redux';
+import { get_cart_products, delete_cart_product, messageClear, quantity_inc, quantity_dec } from '../store/reducers/cartReducer';
+import { dinero, toDecimal, add } from 'dinero.js';
+import MyMoney from '../utilities/MyMoney';
+import toast from 'react-hot-toast';
 const Cart = () => {
+    const formatter = new MyMoney();
     const navigate = useNavigate();
-    const cart_products = [1, 2];
+    const dispatch = useDispatch();
+    const { userInfo } =
+        useSelector(state => state.auth);
+    const { successMessage,
+        errorMessage,
+        cart_products,
+        cart_products_count,//All the products, even if they are out of stock
+        wishlist,
+        wishlist_count,
+        price,//Total price with discount applied, if there is
+        shipping_fee,
+        outofstock_products,
+        buy_product_items } =
+        useSelector(state => state.cart);
     const out_of_stock = [1, 2];
-    const redirect = () => {
+    const redirect_to_shipping = () => {
         navigate('/shipping', {
             state: {
                 products: [],
@@ -28,7 +37,43 @@ const Cart = () => {
             }
         });
     }
+    const inc = (quantity, stock, cartId) => {
+        // console.log(quantity, stock, cartId)
+        let temp = quantity + 1;
+        if (temp <= stock) {
+            dispatch(quantity_inc(cartId));
+        } else {
+            toast('There is no more in stock!', {
+                icon: '⚠️',
+            });
+        }
+    }
 
+    const dec = (quantity, stock, cartId) => {
+        let temp = quantity - 1;
+        if (temp > 0) {
+            dispatch(quantity_dec(cartId));
+        } else {
+            dispatch(delete_cart_product(cartId));
+        }
+    }
+    useEffect(() => {
+        if (userInfo) {
+            dispatch(get_cart_products(userInfo.id));
+        }
+    }, []);
+    useEffect(() => {
+        if (errorMessage) {
+            toast.error(errorMessage);
+            dispatch(messageClear());
+        }
+        if (successMessage) {
+            toast.success(successMessage);
+            dispatch(messageClear());
+            dispatch(get_cart_products(userInfo.id));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [successMessage, errorMessage]);
     return (
         <div>
             <Header />
@@ -70,39 +115,43 @@ const Cart = () => {
                                     <div className='pr-3 md-lg:pr-0'>
                                         <div className='flex flex-col gap-3'>
                                             <div className='bg-white p-4'>
-                                                <h2 className='text-md text-green-500 font-semibold'>Stock Products {cart_products.length}</h2>
+                                                <h2 className='text-md text-green-500 font-semibold'>Stock Products {buy_product_items}</h2>
                                             </div>
                                             {
-                                                [1, 2].map((shop, indexShop) => {
-                                                    return <div className='flex bg-white p-4 flex-col gap-2'>
+                                                cart_products.map((shop, indexShop) => {
+                                                    return <div className='flex bg-white p-4 flex-col gap-2' key={indexShop}>
                                                         <div className='flex justify-start items-center'>
-                                                            <h2 className='text-md text-slate-600 font-bold'>Easy Shop</h2>
+                                                            <h2 className='text-md text-slate-600 font-bold'>{shop.shopName}</h2>
                                                         </div>
                                                         {
-                                                            [1, 2].map((element, index) => {
+                                                            shop.products.map((element, index) => {
                                                                 return <div key={index} className='w-full flex flex-wrap'>
                                                                     <div className='flex sm:w-full gap-2 w-7/12'>
                                                                         <div className='flex gap-2 justify-start items-center'>
-                                                                            <img className='w-[80px] h-[80px]' src={productImages[index]} alt="" />
+                                                                            <img className='w-[80px] h-[80px]' src={element.productInfo.images[0]} alt="" />
                                                                             <div className='pr-4 text-slate-600'>
-                                                                                <h2 className='text-md font-semibold'>Product Name</h2>
-                                                                                <span className='text-sm'>Brand: Nike</span>
+                                                                                <h2 className='text-md font-semibold'>{element.productInfo.name}</h2>
+                                                                                <span className='text-sm'>Brand: {element.productInfo.brand}</span>
                                                                             </div>
                                                                         </div>
                                                                     </div>
                                                                     <div className='flex justify-between sm:mt-3 sm:w-full gap-2 w-5/12'>
-                                                                        <div className='pl-4 sm:pl-0'>
-                                                                            <h2 className='text-lg text-orange-500'>$240</h2>
-                                                                            <p className='line-through'>$300</p>
-                                                                            <p>-15%</p>
-                                                                        </div>
+                                                                        {element.productInfo.discount > 0 ? <div className='pl-4 sm:pl-0'>
+                                                                            <h2 className='text-lg text-orange-500'>
+                                                                                {formatter.applyDiscount(element.productInfo.price, element.productInfo.discount)}
+                                                                            </h2>
+                                                                            <p className='line-through'>{formatter.centsToCurrency(element.productInfo.price)}</p>
+                                                                            <p>-{element.productInfo.discount}%</p>
+                                                                        </div> : <div className='pl-4 sm:pl-0'>
+                                                                            <p className='text-lg'>{formatter.centsToCurrency(element.productInfo.price)}</p>
+                                                                        </div>}
                                                                         <div className='flex flex-col gap-2'>
                                                                             <div className='flex bg-slate-200 h-[30px] justify-center items-center text-xl'>
-                                                                                <div className='px-3 cursor-pointer'>-</div>
-                                                                                <div className='px-3'>2</div>
-                                                                                <div className='px-3 cursor-pointer'>+</div>
+                                                                                <div className='px-3 cursor-pointer' onClick={() => dec(element.quantity, element.productInfo.stock, element._id)}>-</div>
+                                                                                <div className='px-3'>{element.quantity}</div>
+                                                                                <div className='px-3 cursor-pointer' onClick={() => inc(element.quantity, element.productInfo.stock, element._id)} >+</div>
                                                                             </div>
-                                                                            <button className='px-5 py-[3px] bg-red-500 text-white'>Delete</button>
+                                                                            <button className='px-5 py-[3px] bg-red-500 text-white' onClick={() => dispatch(delete_cart_product(element._id))}>Delete</button>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -112,36 +161,40 @@ const Cart = () => {
                                                 })
                                             }
                                             {
-                                                out_of_stock.length > 0 && <div className='flex flex-col gap-3'>
+                                                outofstock_products.length > 0 && <div className='flex flex-col gap-3'>
                                                     <div className='bg-white p-4'>
-                                                        <h2 className='text-md text-red-500 font-semibold'>Out Of Stock {out_of_stock.length}</h2>
+                                                        <h2 className='text-md text-red-500 font-semibold'>Out Of Stock {outofstock_products.length}</h2>
                                                     </div>
                                                     <div className='flex bg-white p-4 flex-col gap-2'>
                                                         {
-                                                            [1, 2].map((element, index) => {
+                                                            outofstock_products.map((element, index) => {
                                                                 return <div key={index} className='w-full flex flex-wrap'>
                                                                     <div className='flex sm:w-full gap-2 w-7/12'>
                                                                         <div className='flex gap-2 justify-start items-center'>
-                                                                            <img className='w-[80px] h-[80px]' src={productImages[index]} alt="" />
+                                                                            <img className='w-[80px] h-[80px]' src={element.products[0].images[0]} alt="" />
                                                                             <div className='pr-4 text-slate-600'>
-                                                                                <h2 className='text-md font-semibold'>Product Name</h2>
-                                                                                <span className='text-sm'>Brand: Nike</span>
+                                                                                <h2 className='text-md font-semibold'>{element.products[0].name}</h2>
+                                                                                <span className='text-sm'>Brand: {element.products[0].brand}</span>
                                                                             </div>
                                                                         </div>
                                                                     </div>
                                                                     <div className='flex justify-between sm:mt-3 sm:w-full gap-2 w-5/12'>
-                                                                        <div className='pl-4 sm:pl-0'>
-                                                                            <h2 className='text-lg text-orange-500'>$240</h2>
-                                                                            <p className='line-through'>$300</p>
-                                                                            <p>-15%</p>
-                                                                        </div>
+                                                                        {element.products[0].discount > 0 ? <div className='pl-4 sm:pl-0'>
+                                                                            <h2 className='text-lg text-orange-500'>
+                                                                                {formatter.applyDiscount(element.products[0].price, element.products[0].discount)}
+                                                                            </h2>
+                                                                            <p className='line-through'>{formatter.centsToCurrency(element.products[0].price)}</p>
+                                                                            <p>-{element.products[0].discount}%</p>
+                                                                        </div> : <div className='pl-4 sm:pl-0'>
+                                                                            <p className='text-lg'>{formatter.centsToCurrency(element.products[0].price)}</p>
+                                                                        </div>}
                                                                         <div className='flex flex-col gap-2'>
                                                                             <div className='flex bg-slate-200 h-[30px] justify-center items-center text-xl'>
-                                                                                <div className='px-3 cursor-pointer'>-</div>
-                                                                                <div className='px-3'>2</div>
+                                                                                <div className='px-3 cursor-pointer' onClick={() => dec(element.quantity, element.products[0].stock, element._id)}>-</div>
+                                                                                <div className='px-3'>{element.quantity}</div>
                                                                                 <div className='px-3 cursor-pointer'>+</div>
                                                                             </div>
-                                                                            <button className='px-5 py-[3px] bg-red-500 text-white'>Delete</button>
+                                                                            <button className='px-5 py-[3px] bg-red-500 text-white' onClick={() => dispatch(delete_cart_product(element._id))}>Delete</button>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -159,12 +212,12 @@ const Cart = () => {
                                             cart_products.length > 0 && <div className='bg-white p-3 text-slate-600 flex flex-col gap-3'>
                                                 <h2 className='text-xl font-bold'>Order Summary</h2>
                                                 <div className='flex justify-between items-center'>
-                                                    <span>2 Items</span>
-                                                    <span>$231</span>
+                                                    <span>{buy_product_items} Items</span>
+                                                    <span>{formatter.fommattDineroObject(price)}</span>
                                                 </div>
                                                 <div className='flex justify-between items-center'>
                                                     <span>Shipping Free</span>
-                                                    <span>$60</span>
+                                                    <span>{formatter.fommattDineroObject(shipping_fee)}</span>
                                                 </div>
                                                 <div className='flex gap-2'>
                                                     <input type="text" className='w-full px-3 py-2 border border-slate-200 outline-0 focus:border-green-500 rounded-sm'
@@ -175,9 +228,9 @@ const Cart = () => {
                                                 </div>
                                                 <div className='flex justify-between items-center'>
                                                     <span>Total</span>
-                                                    <span className='text-lg text-[#059473]'>$291</span>
+                                                    <span className='text-lg text-[#059473]'>{formatter.formattDecimal(toDecimal(add(dinero(price), dinero(shipping_fee))))}</span>
                                                 </div>
-                                                <button onClick={redirect} className='px-5 py-[6px] rounded-sm hover:shadow-red-500/50 hover:shadow-lg bg-red-500 text-sm
+                                                <button onClick={redirect_to_shipping} className='px-5 py-[6px] rounded-sm hover:shadow-red-500/50 hover:shadow-lg bg-red-500 text-sm
                                                     text-white uppercase'>
                                                     Process to Checkout
                                                 </button>
