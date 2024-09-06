@@ -12,6 +12,7 @@ import { useEffect } from 'react';
 import { get_categories, get_products } from './store/reducers/homeReducer';
 import CategoryShop from './pages/CategoryShop';
 import SearchProduct from './pages/SearchProduct';
+import Payment from './pages/Payment';
 
 function App() {
   const dispatch = useDispatch();
@@ -31,6 +32,7 @@ function App() {
         <Route path='/register' element={<Register />}></Route>
         <Route path='/products?' element={<CategoryShop />}></Route>
         <Route path='/products/search?' element={<SearchProduct />}></Route>
+        <Route path='/payment' element={<Payment />}></Route>
       </Routes>
     </BrowserRouter>
   );

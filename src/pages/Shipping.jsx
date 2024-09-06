@@ -1,21 +1,21 @@
 import React, { useState } from 'react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { IoIosArrowForward } from "react-icons/io";
 import banner from '../assets/images/banner/shop.png'
-import imageProduct1 from '../assets/images/products/1.webp'
-import imageProduct2 from '../assets/images/products/2.webp'
-import imageProduct3 from '../assets/images/products/3.webp'
-import imageProduct4 from '../assets/images/products/4.webp'
-import imageProduct5 from '../assets/images/products/5.webp'
-import imageProduct6 from '../assets/images/products/6.webp'
-import imageProduct7 from '../assets/images/products/7.webp'
-import imageProduct8 from '../assets/images/products/8.webp'
-const productImages = [imageProduct1, imageProduct2, imageProduct3, imageProduct4, imageProduct5, imageProduct6, imageProduct7, imageProduct8]
+import MyMoney from '../utilities/MyMoney';
+import { dinero, toDecimal, add, toSnapshot } from 'dinero.js';
+import { useDispatch, useSelector } from 'react-redux';
+import { place_order } from '../store/reducers/orderReducer';
+
 const Shipping = () => {
-    const { state } = useLocation();
-    console.log(state);
+    const formatter = new MyMoney();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { state: { cart_products, price, shipping_fee, items } } = useLocation();
+    const { userInfo } = useSelector(state => state.auth);
+
     const [res, setRes] = useState(false);
     const [data, setData] = useState({
         name: '',
@@ -38,6 +38,18 @@ const Shipping = () => {
         if (name && country && phone && zip_code && state && city && street_address) {
             setRes(true);
         }
+    }
+    const placeOrder = () => {
+        dispatch(place_order({
+            price,
+            totalPrice: toSnapshot(add(dinero(price), dinero(shipping_fee))).amount,
+            products: cart_products,
+            shipping_fee,
+            items,
+            shippingInfo: data,
+            userId: userInfo.id,
+            navigate
+        }));
     }
     return (
         <div>
@@ -147,37 +159,33 @@ const Shipping = () => {
                                     }
                                 </div>
                                 {
-                                    [1, 2].map((shop, indexShop) => {
-                                        return <div className='flex bg-white p-4 flex-col gap-2'>
+                                    cart_products.map((shop, indexShop) => {
+                                        return <div className='flex bg-white p-4 flex-col gap-2' key={indexShop}>
                                             <div className='flex justify-start items-center'>
-                                                <h2 className='text-md text-slate-600 font-bold'>Easy Shop</h2>
+                                                <h2 className='text-md text-slate-600 font-bold'>{shop.shopName}</h2>
                                             </div>
                                             {
-                                                [1, 2].map((element, index) => {
+                                                shop.products.map((element, index) => {
                                                     return <div key={index} className='w-full flex flex-wrap'>
                                                         <div className='flex sm:w-full gap-2 w-7/12'>
                                                             <div className='flex gap-2 justify-start items-center'>
-                                                                <img className='w-[80px] h-[80px]' src={productImages[index]} alt="" />
+                                                                <img className='w-[80px] h-[80px]' src={element.productInfo.images[0]} alt="" />
                                                                 <div className='pr-4 text-slate-600'>
-                                                                    <h2 className='text-md font-semibold'>Product Name</h2>
-                                                                    <span className='text-sm'>Brand: Nike</span>
+                                                                    <h2 className='text-md font-semibold'>{element.productInfo.name}</h2>
+                                                                    <span className='text-sm'>Brand: {element.productInfo.brand}</span>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div className='flex justify-between sm:mt-3 sm:w-full gap-2 w-5/12'>
-                                                            <div className='pl-4 sm:pl-0'>
-                                                                <h2 className='text-lg text-orange-500'>$240</h2>
-                                                                <p className='line-through'>$300</p>
-                                                                <p>-15%</p>
-                                                            </div>
-                                                            <div className='flex flex-col gap-2'>
-                                                                <div className='flex bg-slate-200 h-[30px] justify-center items-center text-xl'>
-                                                                    <div className='px-3 cursor-pointer'>-</div>
-                                                                    <div className='px-3'>2</div>
-                                                                    <div className='px-3 cursor-pointer'>+</div>
-                                                                </div>
-                                                                <button className='px-5 py-[3px] bg-red-500 text-white'>Delete</button>
-                                                            </div>
+                                                            {element.productInfo.discount > 0 ? <div className='pl-4 sm:pl-0'>
+                                                                <h2 className='text-lg text-orange-500'>
+                                                                    {formatter.applyDiscount(element.productInfo.price, element.productInfo.discount)}
+                                                                </h2>
+                                                                <p className='line-through'>{formatter.centsToCurrency(element.productInfo.price)}</p>
+                                                                <p>-{element.productInfo.discount}%</p>
+                                                            </div> : <div className='pl-4 sm:pl-0'>
+                                                                <p className='text-lg'>{formatter.centsToCurrency(element.productInfo.price)}</p>
+                                                            </div>}
                                                         </div>
                                                     </div>
                                                 })
@@ -190,27 +198,27 @@ const Shipping = () => {
                         <div className='w-[33%] md-lg:w-full'>
                             <div className='pl-3 md-lg:pl-0 md-lg:mt-5'>
                                 {
-                                    [1, 2].length > 0 && <div className='bg-white p-3 text-slate-600 flex flex-col gap-3'>
+                                    cart_products.length > 0 && <div className='bg-white p-3 text-slate-600 flex flex-col gap-3'>
                                         <h2 className='text-xl font-bold'>Order Summary</h2>
                                         <div className='flex justify-between items-center'>
-                                            <span>Total Items(2)</span>
-                                            <span>$231</span>
+                                            <span>Total Items({items})</span>
+                                            <span>{formatter.fommattDineroObject(price)}</span>
                                         </div>
                                         <div className='flex justify-between items-center'>
-                                            <span>Delivery Free</span>
-                                            <span>$60</span>
+                                            <span>Shipping Fee</span>
+                                            <span>{formatter.fommattDineroObject(shipping_fee)}</span>
                                         </div>
                                         <div className='flex justify-between items-center'>
                                             <span>Total Payment</span>
-                                            <span>$291</span>
+                                            <span>{formatter.formattDecimal(toDecimal(add(dinero(price), dinero(shipping_fee))))}</span>
                                         </div>
-                                        <div className='flex justify-between items-center'>
+                                        {/* <div className='flex justify-between items-center'>
                                             <span>Total</span>
                                             <span>$500</span>
-                                        </div>
+                                        </div> */}
                                         <button disabled={res ? false : true} className={`
                                             px-5 py-[6px] rounded-sm hover:shadow-red-500/50 hover:shadow-lg ${res ? 'bg-red-500' : 'bg-red-300'} text-sm
-                                                    text-white uppercase`}>
+                                                    text-white uppercase`} onClick={placeOrder}>
                                             PLACE ORDER
                                         </button>
                                     </div>

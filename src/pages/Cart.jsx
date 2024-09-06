@@ -30,10 +30,10 @@ const Cart = () => {
     const redirect_to_shipping = () => {
         navigate('/shipping', {
             state: {
-                products: [],
-                price: 100,
-                shipping_fee: 10,
-                items: 2
+                cart_products,
+                price: price,
+                shipping_fee: shipping_fee,
+                items: buy_product_items
             }
         });
     }
@@ -216,7 +216,7 @@ const Cart = () => {
                                                     <span>{formatter.fommattDineroObject(price)}</span>
                                                 </div>
                                                 <div className='flex justify-between items-center'>
-                                                    <span>Shipping Free</span>
+                                                    <span>Shipping Fee</span>
                                                     <span>{formatter.fommattDineroObject(shipping_fee)}</span>
                                                 </div>
                                                 <div className='flex gap-2'>
