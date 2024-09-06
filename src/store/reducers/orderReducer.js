@@ -15,12 +15,7 @@ export const place_order = createAsyncThunk(
                     items,
                     orderId: data.orderId
                 }
-            });
-            console.log({
-                totalPrice,
-                items,
-                orderId: data.orderId
-            });
+            });        
             return fulfillWithValue(data);
         } catch (error) {
             console.error(error);
