@@ -13,6 +13,9 @@ import { get_categories, get_products } from './store/reducers/homeReducer';
 import CategoryShop from './pages/CategoryShop';
 import SearchProduct from './pages/SearchProduct';
 import Payment from './pages/Payment';
+import Dashboard from './pages/Dashboard';
+import ProtectUser from './utilities/ProtectUser';
+import Index from './components/dashboard/Index';
 
 function App() {
   const dispatch = useDispatch();
@@ -33,6 +36,11 @@ function App() {
         <Route path='/products?' element={<CategoryShop />}></Route>
         <Route path='/products/search?' element={<SearchProduct />}></Route>
         <Route path='/payment' element={<Payment />}></Route>
+        <Route path='/dashboard' element={<ProtectUser />}>
+          <Route path='' element={<Dashboard />}>
+            <Route path='' element={<Index />} />
+          </Route>
+        </Route>
       </Routes>
     </BrowserRouter>
   );
