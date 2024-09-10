@@ -12,8 +12,7 @@ const Index = () => {
     useEffect(() => {
         dispach(get_index_data())
     }, [dispach]);
-    const redirect = (order) => {
-        console.log('goooo');
+    const redirect = (order) => {        
         let items = 0;
         for (let index = 0; index < order.products.length; index++) {            
             items = order.products[index].quantity + items;

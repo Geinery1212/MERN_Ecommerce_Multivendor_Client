@@ -11,7 +11,6 @@ const Orders = () => {
     const { orderId } = useParams();
     const { myOrders } = useSelector(state => state.order);
     const redirect = (order) => {
-        console.log('goooo');
         let items = 0;
         for (let index = 0; index < order.products.length; index++) {
             items = order.products[index].quantity + items;
