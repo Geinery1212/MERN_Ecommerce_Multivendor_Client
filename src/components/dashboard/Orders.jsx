@@ -1,7 +1,36 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { get_orders } from '../../store/reducers/orderReducer';
+import MyMoney from '../../utilities/MyMoney'
 const Orders = () => {
     const [state, setState] = useState('all');
+    const navigate = useNavigate();
+    const formatter = new MyMoney();
+    const dispath = useDispatch();
+    const { orderId } = useParams();
+    const { myOrders } = useSelector(state => state.order);
+    const redirect = (order) => {
+        console.log('goooo');
+        let items = 0;
+        for (let index = 0; index < order.products.length; index++) {
+            items = order.products[index].quantity + items;
+
+        }
+        navigate(
+            '/payment', {
+            state: {
+                totalPrice: order.price,
+                items: items,
+                orderId: order._id
+            }
+        }
+        );
+    }
+    useEffect(() => {
+        dispath(get_orders(state));
+    }, [orderId, dispath, state]);
+
     return (
         <div className='bg-white p-4 rounded-md'>
             <div className='flex justify-between items-center'>
@@ -37,21 +66,26 @@ const Orders = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr className='bg-white border-b'>
-                                <td className='px-6 py-4 font-medium whitespace-nowrap'>#233</td>
-                                <td className='px-6 py-4 font-medium whitespace-nowrap'>$100.99</td>
-                                <td className='px-6 py-4 font-medium whitespace-nowrap'>pending</td>
-                                <td className='px-6 py-4 font-medium whitespace-nowrap'>pending</td>
-                                <td className='px-6 py-4 font-medium whitespace-nowrap'>
-                                    <Link>
-                                        <span className='bg-green-200 text-green-800 text-md font-semibold mr-2 px-3 py-[2px] rounded'>View</span>
-                                    </Link>
-                                    <Link>
-                                        <span className='bg-green-200 text-green-800 text-md font-semibold mr-2 px-3 py-[2px] rounded'>Pay Now</span>
-                                    </Link>
-                                    Link
-                                </td>
-                            </tr>
+                            {
+                                myOrders && myOrders.map((order, i) => {
+                                    return <tr className='bg-white border-b'>
+                                        <td className='px-6 py-4 font-medium whitespace-nowrap'>#{order._id}</td>
+                                        <td className='px-6 py-4 font-medium whitespace-nowrap'>{formatter.centsToCurrency(order.price)}</td>
+                                        <td className='px-6 py-4 font-medium whitespace-nowrap'>{order.payment_status}</td>
+                                        <td className='px-6 py-4 font-medium whitespace-nowrap'>{order.delivery_status}</td>
+                                        <td className='px-6 py-4 font-medium whitespace-nowrap'>
+                                            <Link to={`/dashboard/order/details/${order._id}`}>
+                                                <span className='bg-green-200 text-green-800 text-md font-semibold mr-2 px-3 py-[2px] rounded'>View</span>
+                                            </Link>
+                                            {
+                                                order.payment_status !== 'paid' &&
+                                                <span className='bg-green-200 text-green-800 text-md font-semibold mr-2 px-3 py-[2px] rounded hover:cursor-pointer' onClick={() => redirect(order)} >Pay Now</span>
+
+                                            }
+                                        </td>
+                                    </tr>
+                                })
+                            }
                         </tbody>
                     </table>
                 </div>

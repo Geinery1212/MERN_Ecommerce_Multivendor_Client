@@ -15,7 +15,7 @@ export const place_order = createAsyncThunk(
                     items,
                     orderId: data.orderId
                 }
-            });        
+            });
             return fulfillWithValue(data);
         } catch (error) {
             console.error(error);
@@ -24,14 +24,27 @@ export const place_order = createAsyncThunk(
     }
 );
 
+export const get_orders = createAsyncThunk(
+    'order/get_orders',
+    async (status, { rejectWithValue, fulfillWithValue }) => {
+        try {
+            const { data } = await api.get(`/customer/order/get-orders/${status}`, { withCredentials: true });
+            console.log(data)
+            return fulfillWithValue(data);
+        } catch (error) {
+            console.error(error);
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
 
 export const orderReducer = createSlice({
-    name: 'cart',
+    name: 'order',
     initialState: {
         successMessage: '',
         errorMessage: '',
         myOrders: [],
-        myOrder: {},
+        myOrder: {}
     },
     reducers: {
         messageClear: (state, _) => {
@@ -45,7 +58,8 @@ export const orderReducer = createSlice({
                 state.errorMessage = payload.error;
             }).addCase(place_order.fulfilled, (state, { payload }) => {
                 state.successMessage = payload.message;
-                state.cart_products_count = state.cart_products_count + 1;
+            }).addCase(get_orders.fulfilled, (state, { payload }) => {
+                state.myOrders = payload.orders;                
             })
     }
 });
