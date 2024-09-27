@@ -32,15 +32,14 @@ import MyMoney from '../utilities/MyMoney';
 import toast from 'react-hot-toast';
 import { add_cart, messageClear } from '../store/reducers/cartReducer';
 import { add_wishlist, wishListMessageClear } from '../store/reducers/wishlistReducer';
-
-const productImages = [imageProduct1, imageProduct2, imageProduct3, imageProduct4, imageProduct5, imageProduct6, imageProduct7, imageProduct8]
 const DetailsProduct = () => {
     const { slug } = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const formatter = new MyMoney();
-    const [quantity, setQuantity] = useState(1);
+    const [quantity, setQuantity] = useState(1);    
     const { product, relatedProducts, moreProducts, loader } = useSelector(state => state.home);
+    const { productLoader } = useSelector(state => state.product);
     const { errorMessage, successMessage } = useSelector(state => state.cart);
     const { wishlistErrorMessage, wishlistSuccessMessage } =
         useSelector(state => state.wishlist);
@@ -130,7 +129,7 @@ const DetailsProduct = () => {
         const obj = [{
             sellerId: product.sellerId,
             shopName: product.shopName,
-            price:  formatter.applyDiscountToCents(product.price, product.discount) * quantity,
+            price: formatter.applyDiscountToCents(product.price, product.discount) * quantity,
             products: [{
                 _id: product._id,
                 quantity: quantity,
@@ -170,12 +169,13 @@ const DetailsProduct = () => {
             toast.success(wishlistSuccessMessage);
             dispatch(wishListMessageClear());
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [wishlistSuccessMessage, wishlistErrorMessage]);
+    }, [wishlistSuccessMessage, wishlistErrorMessage, dispatch]);
+
+
     return (
         <div>
             {
-                loader ? <div className='w-screen h-screen flex justify-center
+                (loader && productLoader) ? <div className='w-screen h-screen flex justify-center
                 items-center fixed left-0 top-0 bg-[#38303033] z-[999]'>
                     <FadeLoader />
                 </div> : <div>
@@ -267,7 +267,7 @@ const DetailsProduct = () => {
                                             </> : <h2>{formatter.centsToFomattedCurrency(product.price)}</h2>
                                         }
                                     </div>
-                                    {product.description !=null && <div className='text-slate-600'>
+                                    {product.description != null && <div className='text-slate-600'>
                                         {product.description.length < 300 ? <p>
                                             {product.description}
                                         </p> : <p>{product.description.substring(0, 300)}{'...'} </p>}
@@ -331,7 +331,7 @@ const DetailsProduct = () => {
                                         {
                                             product.stock ?
                                                 <button className='px-8 py-3 h-[50px] cursor-pointer hover:shadow-lg hover:shadow-green-500/40
-                                    bg-[#247462] text-white' onClick={()=>redirect_to_shipping(product)}>Buy Know</button> : ''
+                                    bg-[#247462] text-white' onClick={() => redirect_to_shipping(product)}>Buy Know</button> : ''
                                         }
                                         <Link to={'#'} className='px-8 py-3 h-[50px] cursor-pointer hover:shadow-lg hover:shadow-red-500/40 bg-red-500 text-white'>
                                             Chat Seller</Link>
@@ -357,7 +357,7 @@ const DetailsProduct = () => {
                                         </div>
                                         <div>
                                             {
-                                                data === 'reviews' ? <Reviews /> :
+                                                data === 'reviews' ? <Reviews product={product} /> :
                                                     <p className='py-5 text-slate-600'>
                                                         {product.description}
                                                     </p>
