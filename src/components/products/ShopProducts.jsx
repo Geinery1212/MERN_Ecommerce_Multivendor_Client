@@ -30,9 +30,9 @@ const ShopProducts = ({ styles }) => {
                     </div>
 
                     <div className='flex flex-col justify-start items-start gap-1 w-full overflow-hidden'>
-                        <h2 className='font-bold w-full overflow-hidden text-ellipsis whitespace-wrap'>{product.name}</h2>
+                        <h2 className='font-bold w-full whitespace-normal break-words'>{product.name}</h2>
                         <div className='flex justify-start items-center gap-3'>
-                            <span className='text-md font-semibold'>{formatter.centsToCurrency(product.price)}</span>
+                            <span className='text-md font-semibold'>{formatter.centsToFomattedCurrency(product.price)}</span>
                             <div className='flex'>
                                 <Rating ratings={product.rating} />
                             </div>

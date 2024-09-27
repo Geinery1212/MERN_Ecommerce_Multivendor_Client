@@ -69,6 +69,20 @@ export const filter_products = createAsyncThunk(
     }
 );
 
+export const get_product_details = createAsyncThunk(
+    'home/get_product_details',
+    async (slug, { rejectWithValue, fulfillWithValue }) => {
+        try {
+            const { data } = await api.get(`/customer/get-product-detail/${slug}`);
+            console.log(data);
+            return fulfillWithValue(data);
+        } catch (error) {
+            console.error(error);
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
 export const homeReducer = createSlice({
     name: 'home',
     initialState: {
@@ -85,7 +99,10 @@ export const homeReducer = createSlice({
         priceRange: {
             min: 0,
             max: 0
-        }
+        },
+        product: {},
+        relatedProducts: [],
+        moreProducts: []
 
     },
     reducers: {
@@ -116,6 +133,15 @@ export const homeReducer = createSlice({
                 state.products = payload.products
                 state.perPage = payload.perPage
                 state.totalProducts = payload.totalProducts
+            })
+            .addCase(get_product_details.pending, (state, { payload }) => {
+                state.loader = true            
+            })
+            .addCase(get_product_details.fulfilled, (state, { payload }) => {
+                state.product = payload.product
+                state.relatedProducts = payload.relatedProducts
+                state.moreProducts = payload.moreProducts
+                state.loader = false
             })
     }
 });

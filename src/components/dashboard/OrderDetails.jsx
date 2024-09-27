@@ -65,11 +65,11 @@ const OrderDetails = () => {
                                 </div>
 
                                 {p.discount > 0 ? <div className='pl-4 flex flex-col'>
-                                    <h2 className='text-md text-green-800'>{formatter.applyDiscount(p.price, p.discount)}</h2>
-                                    <p className='line-through'>{formatter.centsToCurrency(p.price)}</p>
+                                    <h2 className='text-md text-green-800'>{formatter.applyDiscountToFormattedCurrency(p.price, p.discount)}</h2>
+                                    <p className='line-through'>{formatter.centsToFomattedCurrency(p.price)}</p>
                                     <p>-{p.discount}%</p>
                                 </div> : <div className='pl-4 flex flex-col'>
-                                    <h2 className='text-md text-green-800'>{formatter.centsToCurrency(p.price)}</h2>
+                                    <h2 className='text-md text-green-800'>{formatter.centsToFomattedCurrency(p.price)}</h2>
                                 </div>
                                 }
 

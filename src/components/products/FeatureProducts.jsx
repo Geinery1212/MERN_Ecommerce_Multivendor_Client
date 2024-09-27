@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { add_cart, messageClear } from '../../store/reducers/cartReducer'
 import toast from 'react-hot-toast'
 import MyMoney from '../../utilities/MyMoney';
+import { add_wishlist, wishListMessageClear } from '../../store/reducers/wishlistReducer'
 const FeatureProducts = ({ products }) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -15,6 +16,8 @@ const FeatureProducts = ({ products }) => {
         useSelector(state => state.auth);
     const { errorMessage, successMessage } =
         useSelector(state => state.cart);
+        const { wishlistErrorMessage, wishlistSuccessMessage } =
+        useSelector(state => state.wishlist);
     const add_to_cart = (product) => {
         if (userInfo) {
             dispatch(add_cart(
@@ -29,6 +32,23 @@ const FeatureProducts = ({ products }) => {
         }
     }
 
+    const add_to_wishlist = (product) => {
+        if (userInfo) {
+            dispatch(add_wishlist(
+                {
+                    productId: product._id,
+                    name: product.name,
+                    price: product.price,
+                    image: product.images.length > 0 ? product.images[0] : '',
+                    discount: product.discount,
+                    slug: product.slug
+                }
+                
+            ));
+        } else {
+            navigate("/login")
+        }
+    }
     useEffect(() => {
         if (errorMessage) {
             toast.error(errorMessage);
@@ -37,7 +57,31 @@ const FeatureProducts = ({ products }) => {
         if (successMessage) {
             toast.success(successMessage);
             dispatch(messageClear());
-        }        
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [successMessage, errorMessage]);
+
+    useEffect(() => {
+        if (wishlistErrorMessage) {
+            toast.error(wishlistErrorMessage);
+            dispatch(wishListMessageClear());
+        }
+        if (wishlistSuccessMessage) {
+            toast.success(wishlistSuccessMessage);
+            dispatch(wishListMessageClear());
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [wishlistSuccessMessage, wishlistErrorMessage]);
+
+    useEffect(() => {
+        if (errorMessage) {
+            toast.error(errorMessage);
+            dispatch(messageClear());
+        }
+        if (successMessage) {
+            toast.success(successMessage);
+            dispatch(messageClear());
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [successMessage, errorMessage]);
     return (
@@ -63,12 +107,12 @@ const FeatureProducts = ({ products }) => {
                                 <ul className='flex transition-all duration-700 -bottom-10 justify-center
                                 items-center gap-2 absolute w-full group-hover:bottom-3'>
                                     <li className='w-[38px] h-[38px] cursor-pointer bg-white flex justify-center items-center rounded-full
-hover:bg-[#059473] hover:text-white hover:rotate-[720deg] transition-all'>
+hover:bg-[#059473] hover:text-white hover:rotate-[720deg] transition-all' onClick={() => add_to_wishlist(product)}>
                                         <FaRegHeart />
                                     </li>
                                     <li className='w-[38px] h-[38px] cursor-pointer bg-white flex justify-center items-center rounded-full
 hover:bg-[#059473] hover:text-white hover:rotate-[720deg] transition-all'>
-                                        <Link to={'/product/details/slug'}><FaEye /></Link>
+                                        <Link to={`/product/details/${product.slug}`}><FaEye /></Link>
                                     </li>
                                     <li onClick={() => add_to_cart(product)} className='w-[38px] h-[38px] cursor-pointer bg-white flex justify-center items-center rounded-full
 hover:bg-[#059473] hover:text-white hover:rotate-[720deg] transition-all'>
@@ -77,9 +121,9 @@ hover:bg-[#059473] hover:text-white hover:rotate-[720deg] transition-all'>
                                 </ul>
                             </div>
                             <div className='py-3 text-slate-600 px-2'>
-                                <h2 className='font-bold w-[98%] overflow-hidden'>{product.name}</h2>
+                                <h2 className='font-bold w-full whitespace-normal break-words'>{product.name}</h2>
                                 <div className='flex justify-start items-center gap-3'>
-                                    <span className='text-md font-semibold'>{product.discount > 0 ? formatter.centsToCurrency(product.price) : formatter.applyDiscount(product.price, product.discount)}</span>
+                                    <span className='text-md font-semibold'>{product.discount > 0 ? formatter.centsToFomattedCurrency(product.price) : formatter.applyDiscountToFormattedCurrency(product.price, product.discount)}</span>
                                     <Rating ratings={product.rating} />
                                 </div>
                             </div>

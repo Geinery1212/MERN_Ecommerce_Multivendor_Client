@@ -50,11 +50,11 @@ const Payment = () => {
                                     <h2 className='font-bold text-lg'>Order Summary </h2>
                                     <div className='flex justify-between items-center'>
                                         <span>{items} Items and Shipping Fee Included </span>
-                                        <span>{formatter.centsToCurrency(totalPrice)}</span>
+                                        <span>{formatter.centsToFomattedCurrency(totalPrice)}</span>
                                     </div>
                                     <div className='flex justify-between items-center font-semibold'>
                                         <span>Total Amount </span>
-                                        <span className='text-lg text-green-600'>{formatter.centsToCurrency(totalPrice)}</span>
+                                        <span className='text-lg text-green-600'>{formatter.centsToFomattedCurrency(totalPrice)}</span>
                                     </div>
 
 

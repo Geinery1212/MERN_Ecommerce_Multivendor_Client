@@ -179,12 +179,12 @@ const Shipping = () => {
                                                         <div className='flex justify-between sm:mt-3 sm:w-full gap-2 w-5/12'>
                                                             {element.productInfo.discount > 0 ? <div className='pl-4 sm:pl-0'>
                                                                 <h2 className='text-lg text-orange-500'>
-                                                                    {formatter.applyDiscount(element.productInfo.price, element.productInfo.discount)}
+                                                                    {formatter.applyDiscountToFormattedCurrency(element.productInfo.price, element.productInfo.discount)}
                                                                 </h2>
-                                                                <p className='line-through'>{formatter.centsToCurrency(element.productInfo.price)}</p>
+                                                                <p className='line-through'>{formatter.centsToFomattedCurrency(element.productInfo.price)}</p>
                                                                 <p>-{element.productInfo.discount}%</p>
                                                             </div> : <div className='pl-4 sm:pl-0'>
-                                                                <p className='text-lg'>{formatter.centsToCurrency(element.productInfo.price)}</p>
+                                                                <p className='text-lg'>{formatter.centsToFomattedCurrency(element.productInfo.price)}</p>
                                                             </div>}
                                                         </div>
                                                     </div>
@@ -202,15 +202,15 @@ const Shipping = () => {
                                         <h2 className='text-xl font-bold'>Order Summary</h2>
                                         <div className='flex justify-between items-center'>
                                             <span>Total Items({items})</span>
-                                            <span>{formatter.fommattDineroObject(price)}</span>
+                                            <span>{formatter.dineroObjectToFomattedCurrency(price)}</span>
                                         </div>
                                         <div className='flex justify-between items-center'>
                                             <span>Shipping Fee</span>
-                                            <span>{formatter.fommattDineroObject(shipping_fee)}</span>
+                                            <span>{formatter.dineroObjectToFomattedCurrency(shipping_fee)}</span>
                                         </div>
                                         <div className='flex justify-between items-center'>
                                             <span>Total Payment</span>
-                                            <span>{formatter.formattDecimal(toDecimal(add(dinero(price), dinero(shipping_fee))))}</span>
+                                            <span>{formatter.decimalToFormattedCurrency(toDecimal(add(dinero(price), dinero(shipping_fee))))}</span>
                                         </div>
                                         {/* <div className='flex justify-between items-center'>
                                             <span>Total</span>

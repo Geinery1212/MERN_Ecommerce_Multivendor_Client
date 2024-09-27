@@ -69,7 +69,7 @@ const Orders = () => {
                                 myOrders && myOrders.map((order, i) => {
                                     return <tr className='bg-white border-b'>
                                         <td className='px-6 py-4 font-medium whitespace-nowrap'>#{order._id}</td>
-                                        <td className='px-6 py-4 font-medium whitespace-nowrap'>{formatter.centsToCurrency(order.price)}</td>
+                                        <td className='px-6 py-4 font-medium whitespace-nowrap'>{formatter.centsToFomattedCurrency(order.price)}</td>
                                         <td className='px-6 py-4 font-medium whitespace-nowrap'>{order.payment_status}</td>
                                         <td className='px-6 py-4 font-medium whitespace-nowrap'>{order.delivery_status}</td>
                                         <td className='px-6 py-4 font-medium whitespace-nowrap'>

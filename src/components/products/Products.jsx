@@ -64,7 +64,7 @@ const Products = ({title, products}) => {
                                         className='w-[110px] h-[110px]' />
                                     <div className='px-3 flex justify-start items-start gap-1 flex-col text-slate-600'>
                                         <h2>{element.name}</h2>
-                                        <span className='text-lg font-bold'>{formatter.centsToCurrency(element.price)}</span>
+                                        <span className='text-lg font-bold'>{formatter.centsToFomattedCurrency(element.price)}</span>
                                     </div>
 
                                 </Link>

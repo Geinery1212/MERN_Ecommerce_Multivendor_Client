@@ -1,6 +1,6 @@
-import { dinero, toDecimal, subtract, allocate } from 'dinero.js';
+import { dinero, toDecimal, subtract, allocate, toSnapshot } from 'dinero.js';
 import { USD } from '@dinero.js/currencies';
-
+//doc of Dinero.js: 
 class MyMoney {
     LOCATE = 'en-US';
     CURRENCY = 'USD';
@@ -11,7 +11,7 @@ class MyMoney {
      * @returns {string} - The price in the original currency as a string formatted to the specified decimal places.
      * @throws {Error} - Throws an error if the input does not match the expected Dinero object structure.
      */
-    fommattDineroObject = (dineroObject) => {
+    dineroObjectToFomattedCurrency = (dineroObject) => {
         if (!dineroObject || typeof dineroObject.amount !== 'number') {
             throw new Error('Invalid Dinero object structure');
         }
@@ -26,13 +26,27 @@ class MyMoney {
     }
 
     /**
+  * Converts a value in cents to a Dinero.js object.
+  * 
+  * @param {number} cents - The monetary value in cents.
+  * @param {number} scale - The scale for the Dinero object, which determines the precision (e.g., 2 for cents).
+  * @returns {object} - A json object representing the monetary value.
+  */
+    centsToDineroObject = (cents, scale) => {
+        console.log(cents);
+        const intCents = parseInt(cents, 10);
+        return { amount: intCents, currency: USD, scale: scale };
+    }
+
+
+    /**
  * Formats a decimal number into a USD currency string.
  * 
  * @param {number} decimalMoney - The decimal number representing money to be formatted.
  * @returns {string} - The formatted currency string in USD.
  * @throws {Error} - Throws an error if the input is not a valid number.
  */
-    formattDecimal = (decimalMoney) => {
+    decimalToFormattedCurrency = (decimalMoney) => {
         let a = parseFloat(decimalMoney);
         if (typeof a !== 'number' || isNaN(a)) {
             throw new Error('Invalid input: decimalMoney must be a valid number.');
@@ -53,10 +67,11 @@ class MyMoney {
 * @returns {string} - The price in the original currency as a string formatted to the specified decimal places.
 * @throws {Error} - Throws an error if the input is not a valid integer.
 */
-    centsToCurrency(cents, fractionDigits = 2) {
+    centsToFomattedCurrency(cents, fractionDigits = 2) {
         // Ensure the cents value is a valid integer
         if (!Number.isInteger(cents)) {
-            throw new Error("Invalid cents input. Please provide a valid integer.");
+            cents = 0;
+            // throw new Error("Invalid cents input. Please provide a valid integer.");
         }
 
         let currency = cents / 100;
@@ -77,10 +92,10 @@ class MyMoney {
  * @param {number} discount - The discount percentage to apply.
  * @returns {String} - The price after the discount is applied as a string formatted.
  */
-    applyDiscount = (pri, discount) => {
+    applyDiscountToFormattedCurrency = (pri, discount) => {
         const d1 = dinero({ amount: pri, currency: USD, scale: 2 });
         if (typeof discount !== 'number' || discount < 0 || discount > 100) {
-            throw new Error('Invalid commission: must be a number between 0 and 100.');
+            throw new Error('Invalid discount: must be a number between 0 and 100.');
         }
 
         const withoutDiscount = 100 - discount;
@@ -91,8 +106,27 @@ class MyMoney {
             currency: this.CURRENCY,
         });
 
-        const d2 = subtract(d1, discountAmount);        
+        const d2 = subtract(d1, discountAmount);
         return formatter.format(toDecimal(d2));
+    }
+
+
+    /**
+* Applies a commission discount to the given price.
+* 
+* @param {number} pri - The the original price in cets.
+* @param {number} discount - The discount percentage to apply.
+* @returns {int} - The price after the discount is applied as an int.
+*/
+    applyDiscountToCents = (pri, discount) => {
+        const d1 = dinero({ amount: pri, currency: USD, scale: 2 });
+        if (typeof discount !== 'number' || discount < 0 || discount > 100) {
+            throw new Error('Invalid discount: must be a number between 0 and 100.');
+        }
+
+        const withoutDiscount = 100 - discount;
+        const [discountAmount, remainingAmount] = allocate(d1, [discount, withoutDiscount]);
+        return toSnapshot(remainingAmount).amount;
     }
 
 }
