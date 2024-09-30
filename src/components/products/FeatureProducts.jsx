@@ -16,7 +16,7 @@ const FeatureProducts = ({ products }) => {
         useSelector(state => state.auth);
     const { errorMessage, successMessage } =
         useSelector(state => state.cart);
-        const { wishlistErrorMessage, wishlistSuccessMessage } =
+    const { wishlistErrorMessage, wishlistSuccessMessage } =
         useSelector(state => state.wishlist);
     const add_to_cart = (product) => {
         if (userInfo) {
@@ -43,13 +43,13 @@ const FeatureProducts = ({ products }) => {
                     discount: product.discount,
                     slug: product.slug
                 }
-                
+
             ));
         } else {
             navigate("/login")
         }
     }
-    useEffect(() => {
+    useEffect(() => {        
         if (errorMessage) {
             toast.error(errorMessage);
             dispatch(messageClear());
@@ -110,10 +110,10 @@ const FeatureProducts = ({ products }) => {
 hover:bg-[#059473] hover:text-white hover:rotate-[720deg] transition-all' onClick={() => add_to_wishlist(product)}>
                                         <FaRegHeart />
                                     </li>
-                                    <li className='w-[38px] h-[38px] cursor-pointer bg-white flex justify-center items-center rounded-full
+                                    <Link to={`/product/details/${product.slug}`}><li className='w-[38px] h-[38px] cursor-pointer bg-white flex justify-center items-center rounded-full
 hover:bg-[#059473] hover:text-white hover:rotate-[720deg] transition-all'>
-                                        <Link to={`/product/details/${product.slug}`}><FaEye /></Link>
-                                    </li>
+                                        <FaEye />
+                                    </li></Link>
                                     <li onClick={() => add_to_cart(product)} className='w-[38px] h-[38px] cursor-pointer bg-white flex justify-center items-center rounded-full
 hover:bg-[#059473] hover:text-white hover:rotate-[720deg] transition-all'>
                                         <RiShoppingCartLine />

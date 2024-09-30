@@ -37,7 +37,7 @@ const DetailsProduct = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const formatter = new MyMoney();
-    const [quantity, setQuantity] = useState(1);    
+    const [quantity, setQuantity] = useState(1);
     const { product, relatedProducts, moreProducts, loader } = useSelector(state => state.home);
     const { productLoader } = useSelector(state => state.product);
     const { errorMessage, successMessage } = useSelector(state => state.cart);
@@ -158,7 +158,7 @@ const DetailsProduct = () => {
             toast.success(successMessage);
             dispatch(messageClear());
         }
-    }, [successMessage, errorMessage, dispatch]);
+    }, [successMessage, errorMessage]);
 
     useEffect(() => {
         if (wishlistErrorMessage) {
@@ -169,7 +169,7 @@ const DetailsProduct = () => {
             toast.success(wishlistSuccessMessage);
             dispatch(wishListMessageClear());
         }
-    }, [wishlistSuccessMessage, wishlistErrorMessage, dispatch]);
+    }, [wishlistSuccessMessage, wishlistErrorMessage]);
 
 
     return (
@@ -272,6 +272,7 @@ const DetailsProduct = () => {
                                             {product.description}
                                         </p> : <p>{product.description.substring(0, 300)}{'...'} </p>}
                                     </div>}
+                                    <p className='font-bold'>Shop Name: {product.shopName}</p>
                                     {/* increment, decrease buttons and whilist button */}
                                     <div className='flex gap-3 pb-10 border-b'>
                                         {
@@ -333,7 +334,7 @@ const DetailsProduct = () => {
                                                 <button className='px-8 py-3 h-[50px] cursor-pointer hover:shadow-lg hover:shadow-green-500/40
                                     bg-[#247462] text-white' onClick={() => redirect_to_shipping(product)}>Buy Know</button> : ''
                                         }
-                                        <Link to={'#'} className='px-8 py-3 h-[50px] cursor-pointer hover:shadow-lg hover:shadow-red-500/40 bg-red-500 text-white'>
+                                        <Link to={`/dashboard/chat/${product.sellerId}`} className='px-8 py-3 h-[50px] cursor-pointer hover:shadow-lg hover:shadow-red-500/40 bg-red-500 text-white'>
                                             Chat Seller</Link>
                                     </div>
                                 </div>
