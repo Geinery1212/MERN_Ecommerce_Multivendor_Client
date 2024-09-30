@@ -3,16 +3,23 @@ import { MdOutlineKeyboardDoubleArrowLeft, MdOutlineKeyboardDoubleArrowRight } f
 
 
 const Pagination = ({ pageNumber, setPageNumber, totalItems, perPage, showItem }) => {
+    //showItem its used to calculate the start page
+    //pageNumber = 1
+    //totalItems= 7
+    //perPage = 5
+    //showItem = 7/5= 1
+    let totalPages = Math.ceil(totalItems / perPage) //2 
+    // console.log('totalItems', totalItems, 'perPage', perPage)
+    // console.log('TOTAL PAGES', totalPages)   
+    let startPage = pageNumber//1
 
-    let totalPage = Math.ceil(totalItems / perPage)
-    let startPage = pageNumber
-
-    let diff = totalPage - pageNumber
+    let diff = totalPages - pageNumber//1
+    //diff = 1 //showitem = 1
     if (diff <= showItem) {
-        startPage = totalPage - showItem
+        startPage = totalPages - showItem//1
     }
-    let endPage = startPage < 0 ? showItem : showItem + startPage
 
+    let endPage = startPage < 0 ? showItem : showItem + startPage //2
     if (startPage <= 0) {
         startPage = 1
     }
@@ -40,8 +47,9 @@ const Pagination = ({ pageNumber, setPageNumber, totalItems, perPage, showItem }
             {
                 createBtn()
             }
-            {
-                pageNumber < totalPage && <li onClick={() => setPageNumber(pageNumber + 1)} className='w-[33px] h-[33px] rounded-full flex justify-center items-center bg-slate-300 text-[#000000] cursor-pointer'>
+            {/* {console.log('result', pageNumber < totalPages, 'totalPages', totalPages, 'pageNumber', pageNumber)} */}
+            {                
+                pageNumber < totalPages && <li onClick={() => setPageNumber(pageNumber + 1)} className='w-[33px] h-[33px] rounded-full flex justify-center items-center bg-slate-300 text-[#000000] cursor-pointer'>
                     <MdOutlineKeyboardDoubleArrowRight />
                 </li>
             }

@@ -59,7 +59,7 @@ const Reviews = ({ product }) => {
             }));
         }
 
-    }, [product, pageNumber, dispatch]);
+    }, [product, pageNumber]);
 
     return (
         <div className='mt-8'>
@@ -81,7 +81,10 @@ const Reviews = ({ product }) => {
                             <RatingTemp rating={5} />
                         </div>
                         <div className='w-[200px] h-[14px] bg-slate-200 relative'>
-                            <div className={`h-full bg-[#Edbb0E] w-[${(ratingReviews[0]?.sum / totalReviews) * 100}%]`}>
+                            <div
+                                className='h-full bg-[#Edbb0E]'
+                                style={{ width: `${(ratingReviews[0]?.sum / totalReviews) * 100}%` }}
+                            >
                             </div>
                         </div>
                         <p className='text-sm text-slate-600'>{ratingReviews[0]?.sum}</p>
@@ -92,7 +95,10 @@ const Reviews = ({ product }) => {
                             <RatingTemp rating={4} />
                         </div>
                         <div className='w-[200px] h-[14px] bg-slate-200 relative'>
-                            <div className={`h-full bg-[#Edbb0E] w-[${Math.round((ratingReviews[1]?.sum / totalReviews) * 100)}%]`}>
+                            <div
+                                className='h-full bg-[#Edbb0E]'
+                                style={{ width: `${(ratingReviews[1]?.sum / totalReviews) * 100}%` }}
+                            >
                             </div>
                         </div>
                         <p className='text-sm text-slate-600'>{ratingReviews[1]?.sum}</p>
@@ -103,7 +109,10 @@ const Reviews = ({ product }) => {
                             <RatingTemp rating={3} />
                         </div>
                         <div className='w-[200px] h-[14px] bg-slate-200 relative'>
-                            <div className={`h-full bg-[#Edbb0E] w-[${(ratingReviews[2]?.sum / totalReviews) * 100}%]`}>
+                            <div
+                                className='h-full bg-[#Edbb0E]'
+                                style={{ width: `${(ratingReviews[2]?.sum / totalReviews) * 100}%` }}
+                            >
                             </div>
                         </div>
                         <p className='text-sm text-slate-600'>{ratingReviews[2]?.sum}</p>
@@ -114,7 +123,10 @@ const Reviews = ({ product }) => {
                             <RatingTemp rating={2} />
                         </div>
                         <div className='w-[200px] h-[14px] bg-slate-200 relative'>
-                            <div className={`h-full bg-[#Edbb0E] w-[${(ratingReviews[3]?.sum / totalReviews) * 100}%]`}>
+                            <div
+                                className='h-full bg-[#Edbb0E]'
+                                style={{ width: `${(ratingReviews[3]?.sum / totalReviews) * 100}%` }}
+                            >
                             </div>
                         </div>
                         <p className='text-sm text-slate-600'>{ratingReviews[3]?.sum}</p>
@@ -125,7 +137,10 @@ const Reviews = ({ product }) => {
                             <RatingTemp rating={1} />
                         </div>
                         <div className='w-[200px] h-[14px] bg-slate-200 relative'>
-                            <div className={`h-full bg-[#Edbb0E] w-[${(ratingReviews[4]?.sum / totalReviews) * 100}%]`}>
+                            <div
+                                className='h-full bg-[#Edbb0E]'
+                                style={{ width: `${(ratingReviews[4]?.sum / totalReviews) * 100}%` }}
+                            >
                             </div>
                         </div>
                         <p className='text-sm text-slate-600'>{ratingReviews[4]?.sum}</p>
@@ -162,7 +177,7 @@ const Reviews = ({ product }) => {
                 }
                 <div className='flex justify-end'>
                     {
-                        <Pagination pageNumber={pageNumber} setPageNumber={setPageNumber} totalItem={10} perPage={perPage} showItem={Math.floor(10 / 3)} />
+                        <Pagination pageNumber={pageNumber} setPageNumber={setPageNumber} totalItems={totalReviews} perPage={perPage} showItem={Math.floor(totalReviews / perPage)} />
                     }
                 </div>
             </div>
