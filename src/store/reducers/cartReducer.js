@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import api from "../../api/api";
+import api from "../../connection/api";
 import { useId } from "react";
 //asynchronous aperations
 export const add_cart = createAsyncThunk(
@@ -110,6 +110,7 @@ export const cartReducer = createSlice({
 
             .addCase(get_cart_products.fulfilled, (state, { payload }) => {
                 state.cart_products = payload.cart_products;
+                state.cart_products_count = payload.cart_products.length;
                 state.price = payload.price;
                 state.cart_products_count = payload.cart_products_count;
                 state.buy_product_items = payload.buy_product_items;

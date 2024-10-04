@@ -158,7 +158,7 @@ const DetailsProduct = () => {
             toast.success(successMessage);
             dispatch(messageClear());
         }
-    }, [successMessage, errorMessage]);
+    }, [successMessage, errorMessage, dispatch]);
 
     useEffect(() => {
         if (wishlistErrorMessage) {
@@ -169,7 +169,7 @@ const DetailsProduct = () => {
             toast.success(wishlistSuccessMessage);
             dispatch(wishListMessageClear());
         }
-    }, [wishlistSuccessMessage, wishlistErrorMessage]);
+    }, [wishlistSuccessMessage, wishlistErrorMessage, dispatch]);
 
 
     return (

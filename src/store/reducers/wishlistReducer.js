@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import api from "../../api/api";
+import api from "../../connection/api";
 //asynchronous aperations
 export const add_wishlist = createAsyncThunk(
     'wishlist/add',
@@ -69,7 +69,8 @@ export const wishlistReducer = createSlice({
             .addCase(get_wishlist.rejected, (state, { payload }) => {
                 state.wishlistErrorMessage = payload.error;
             }).addCase(get_wishlist.fulfilled, (state, { payload }) => {
-                state.wishlist = payload.wishlist;                
+                state.wishlist = payload.wishlist;  
+                state.wishlist_count = state.wishlist.length;              
             })
 
             .addCase(delete_wishlist.rejected, (state, { payload }) => {

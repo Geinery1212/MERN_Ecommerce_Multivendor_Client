@@ -4,10 +4,10 @@ import { RiShoppingCartLine } from 'react-icons/ri'
 import Rating from '../Rating'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { add_cart, messageClear } from '../../store/reducers/cartReducer'
+import { add_cart, get_cart_products, messageClear } from '../../store/reducers/cartReducer'
 import toast from 'react-hot-toast'
 import MyMoney from '../../utilities/MyMoney';
-import { add_wishlist, wishListMessageClear } from '../../store/reducers/wishlistReducer'
+import { add_wishlist, get_wishlist, wishListMessageClear } from '../../store/reducers/wishlistReducer'
 const FeatureProducts = ({ products }) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -49,7 +49,7 @@ const FeatureProducts = ({ products }) => {
             navigate("/login")
         }
     }
-    useEffect(() => {        
+    useEffect(() => {
         if (errorMessage) {
             toast.error(errorMessage);
             dispatch(messageClear());
@@ -58,8 +58,7 @@ const FeatureProducts = ({ products }) => {
             toast.success(successMessage);
             dispatch(messageClear());
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [successMessage, errorMessage]);
+    }, [successMessage, errorMessage, dispatch]);
 
     useEffect(() => {
         if (wishlistErrorMessage) {
@@ -70,20 +69,15 @@ const FeatureProducts = ({ products }) => {
             toast.success(wishlistSuccessMessage);
             dispatch(wishListMessageClear());
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [wishlistSuccessMessage, wishlistErrorMessage]);
+    }, [wishlistSuccessMessage, wishlistErrorMessage, dispatch]);
 
     useEffect(() => {
-        if (errorMessage) {
-            toast.error(errorMessage);
-            dispatch(messageClear());
+        if (userInfo) {
+            dispatch(get_wishlist());
+            dispatch(get_cart_products(userInfo.id));
         }
-        if (successMessage) {
-            toast.success(successMessage);
-            dispatch(messageClear());
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [successMessage, errorMessage]);
+
+    }, [dispatch, userInfo]);
     return (
         <div className='w-[85%] flex flex-wrap mx-auto'>
             <div className='w-full'>
