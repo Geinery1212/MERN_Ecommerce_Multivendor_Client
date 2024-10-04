@@ -12,6 +12,8 @@ import { FadeLoader } from 'react-spinners';
 const Chat = () => {
     const dispatch = useDispatch();
     const [newMessageText, setNewMessageText] = useState('');
+    const [newMessageReceived, setNewMessageReceived] = useState({});
+    const [allSellersActive, setAllSellersActive] = useState([]);
     const { sellerId } = useParams();
     const { userInfo } = useSelector(state => state.auth);
     const { chatLoader, chatSuccessMessage, chatErrorMessage, myFriends, friendMessages, currentFriend } = useSelector(state => state.chat);
@@ -40,6 +42,19 @@ const Chat = () => {
             }));
         }
     }, [dispatch, sellerId, userInfo]);
+
+    useEffect(() => {
+        socket.on('seller_message', msg => {
+            console.log('this is the data sended')
+            setNewMessageReceived(msg);
+            console.log(msg);
+        });
+        socket.on('activeSellers', allSellers => {
+            setAllSellersActive(allSellers);
+            console.log('all sellers');
+            console.log(allSellers);
+        });
+    }, [socket]);
     return (
         <div>
             {
@@ -58,7 +73,7 @@ const Chat = () => {
                                     myFriends && myFriends.map((friend, i) => {
                                         return <Link key={i} to={`/dashboard/chat/${friend.fdId}`} className={`flex gap-2 justify-start items-center pl-2 py-[5px]`} >
                                             <div className='w-[30px] h-[30px] rounded-full relative'>
-                                                {(currentFriend && friend.fdId === currentFriend.fdId) && <div className='w-[10px] h-[10px] rounded-full bg-green-500 absolute right-0 bottom-0'></div>}
+                                                {allSellersActive.some((s) => s.sellerId === friend.fdId) && <div className='w-[10px] h-[10px] rounded-full bg-green-500 absolute right-0 bottom-0'></div>}
                                                 <img src={friend.image} alt="" />
                                             </div>
                                             <span>{friend.name}</span>
@@ -74,7 +89,7 @@ const Chat = () => {
                                 currentFriend ? <div className='w-full h-full'>
                                     <div className='flex justify-start gap-3 items-center text-slate-600 text-xl h-[50px]'>
                                         <div className='w-[30px] h-[30px] rounded-full relative'>
-                                            <div className='w-[10px] h-[10px] rounded-full bg-green-500 absolute right-0 bottom-0'></div>
+                                            {allSellersActive.some(s => s.sellerId === currentFriend.fdId) && <div className='w-[10px] h-[10px] rounded-full bg-green-500 absolute right-0 bottom-0'></div>}
                                             {currentFriend.image !== '' ? <img src={currentFriend.image} alt="" /> : <img src={userImage} alt="" />}
                                         </div>
                                         <span>{currentFriend.name}</span>
