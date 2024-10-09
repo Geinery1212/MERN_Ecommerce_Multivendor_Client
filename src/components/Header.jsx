@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FaFacebook, FaHeart, FaInstagram, FaLinkedin, FaList, FaLock, FaPhoneAlt, FaTwitter, FaUser } from 'react-icons/fa'
 import { IoIosArrowDown, IoMdArrowDropdown, IoMdPhonePortrait } from 'react-icons/io'
 import { MdEmail } from 'react-icons/md'
@@ -6,9 +6,13 @@ import languagePng from '../assets/images/language.png'
 import logo from '../assets/images/logo.png';
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { FaCartShopping } from 'react-icons/fa6'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import toast from 'react-hot-toast'
+import { get_wishlist, wishListMessageClear } from '../store/reducers/wishlistReducer'
+import { get_cart_products, messageClear } from '../store/reducers/cartReducer'
 const Header = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const { categories } =
         useSelector(state => state.home);
     const { wishlist_count } =
@@ -23,7 +27,10 @@ const Header = () => {
     const [categoryShow, setCategoryShow] = useState(true);
     const [searchValue, setSearchValue] = useState('');
     const [category, setCategory] = useState('');
-
+    const { errorMessage, successMessage } =
+        useSelector(state => state.cart);
+    const { wishlistErrorMessage, wishlistSuccessMessage } =
+        useSelector(state => state.wishlist);
     const search = (e) => {
         navigate(`/products/search?searchValue=${searchValue}&category=${category}`)
     }
@@ -34,6 +41,36 @@ const Header = () => {
             navigate('/login')
         }
     }
+
+    useEffect(() => {
+        if (errorMessage) {
+            toast.error(errorMessage);
+            dispatch(messageClear());
+        }
+        if (successMessage) {
+            toast.success(successMessage);
+            dispatch(messageClear());
+        }
+    }, [successMessage, errorMessage, dispatch]);
+
+    useEffect(() => {
+        if (wishlistErrorMessage) {
+            toast.error(wishlistErrorMessage);
+            dispatch(wishListMessageClear());
+        }
+        if (wishlistSuccessMessage) {
+            toast.success(wishlistSuccessMessage);
+            dispatch(wishListMessageClear());
+        }
+    }, [wishlistSuccessMessage, wishlistErrorMessage, dispatch]);
+
+    useEffect(() => {
+        if (userInfo) {
+            dispatch(get_wishlist());
+            dispatch(get_cart_products(userInfo.id));
+        }
+
+    }, [dispatch, userInfo]);
     return (
         <div className='w-full bg-white'>
             <div className='header-top bg-[#caddff] md-lg:hidden'>

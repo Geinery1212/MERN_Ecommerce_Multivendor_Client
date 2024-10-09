@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { IoIosArrowForward } from "react-icons/io";
 import banner from '../assets/images/banner/shop.png'
 import { useDispatch, useSelector } from 'react-redux';
-import { get_cart_products, delete_cart_product, messageClear, quantity_inc, quantity_dec } from '../store/reducers/cartReducer';
+import { get_cart_products, delete_cart_product, quantity_inc, quantity_dec } from '../store/reducers/cartReducer';
 import { dinero, toDecimal, add } from 'dinero.js';
 import MyMoney from '../utilities/MyMoney';
 import toast from 'react-hot-toast';
@@ -16,11 +16,7 @@ const Cart = () => {
     const { userInfo } =
         useSelector(state => state.auth);
     const { successMessage,
-        errorMessage,
         cart_products,
-        cart_products_count,//All the products, even if they are out of stock
-        wishlist,
-        wishlist_count,
         price,//Total price with discount applied, if there is
         shipping_fee,
         outofstock_products,
@@ -63,17 +59,10 @@ const Cart = () => {
         }
     }, []);
     useEffect(() => {
-        if (errorMessage) {
-            toast.error(errorMessage);
-            dispatch(messageClear());
-        }
         if (successMessage) {
-            toast.success(successMessage);
-            dispatch(messageClear());
             dispatch(get_cart_products(userInfo.id));
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [successMessage, errorMessage]);
+    }, [dispatch, successMessage, userInfo]);
     return (
         <div>
             <Header />

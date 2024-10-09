@@ -1,23 +1,19 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { FaEye, FaRegHeart } from 'react-icons/fa'
 import { RiShoppingCartLine } from 'react-icons/ri'
 import Rating from '../Rating'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { add_cart, get_cart_products, messageClear } from '../../store/reducers/cartReducer'
-import toast from 'react-hot-toast'
+import { add_cart } from '../../store/reducers/cartReducer'
 import MyMoney from '../../utilities/MyMoney';
-import { add_wishlist, get_wishlist, wishListMessageClear } from '../../store/reducers/wishlistReducer'
+import { add_wishlist} from '../../store/reducers/wishlistReducer'
 const FeatureProducts = ({ products }) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const formatter = new MyMoney();
     const { userInfo } =
         useSelector(state => state.auth);
-    const { errorMessage, successMessage } =
-        useSelector(state => state.cart);
-    const { wishlistErrorMessage, wishlistSuccessMessage } =
-        useSelector(state => state.wishlist);
+    
     const add_to_cart = (product) => {
         if (userInfo) {
             dispatch(add_cart(
@@ -48,36 +44,7 @@ const FeatureProducts = ({ products }) => {
         } else {
             navigate("/login")
         }
-    }
-    useEffect(() => {
-        if (errorMessage) {
-            toast.error(errorMessage);
-            dispatch(messageClear());
-        }
-        if (successMessage) {
-            toast.success(successMessage);
-            dispatch(messageClear());
-        }
-    }, [successMessage, errorMessage, dispatch]);
-
-    useEffect(() => {
-        if (wishlistErrorMessage) {
-            toast.error(wishlistErrorMessage);
-            dispatch(wishListMessageClear());
-        }
-        if (wishlistSuccessMessage) {
-            toast.success(wishlistSuccessMessage);
-            dispatch(wishListMessageClear());
-        }
-    }, [wishlistSuccessMessage, wishlistErrorMessage, dispatch]);
-
-    useEffect(() => {
-        if (userInfo) {
-            dispatch(get_wishlist());
-            dispatch(get_cart_products(userInfo.id));
-        }
-
-    }, [dispatch, userInfo]);
+    }   
     return (
         <div className='w-[85%] flex flex-wrap mx-auto'>
             <div className='w-full'>

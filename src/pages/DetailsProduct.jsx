@@ -1,18 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
-import { USD } from '@dinero.js/currencies';
 import { IoIosArrowForward } from "react-icons/io";
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import banner from '../assets/images/banner/shop.png'
-import imageProduct1 from '../assets/images/products/1.webp'
-import imageProduct2 from '../assets/images/products/2.webp'
-import imageProduct3 from '../assets/images/products/3.webp'
-import imageProduct4 from '../assets/images/products/4.webp'
-import imageProduct5 from '../assets/images/products/5.webp'
-import imageProduct6 from '../assets/images/products/6.webp'
-import imageProduct7 from '../assets/images/products/7.webp'
-import imageProduct8 from '../assets/images/products/8.webp'
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css'
 import Rating from '../components/Rating';
@@ -20,7 +11,7 @@ import { FaFacebook, FaHeart, FaInstagram, FaLinkedin, FaTwitter } from 'react-i
 import Reviews from '../components/Reviews';
 import { FadeLoader } from 'react-spinners';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination } from 'swiper/modules';
+import { Pagination } from 'swiper/modules';
 // Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -30,8 +21,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { get_product_details } from '../store/reducers/homeReducer';
 import MyMoney from '../utilities/MyMoney';
 import toast from 'react-hot-toast';
-import { add_cart, messageClear } from '../store/reducers/cartReducer';
-import { add_wishlist, wishListMessageClear } from '../store/reducers/wishlistReducer';
+import { add_cart } from '../store/reducers/cartReducer';
+import { add_wishlist } from '../store/reducers/wishlistReducer';
 const DetailsProduct = () => {
     const { slug } = useParams();
     const dispatch = useDispatch();
@@ -40,9 +31,6 @@ const DetailsProduct = () => {
     const [quantity, setQuantity] = useState(1);
     const { product, relatedProducts, moreProducts, loader } = useSelector(state => state.home);
     const { productLoader } = useSelector(state => state.product);
-    const { errorMessage, successMessage } = useSelector(state => state.cart);
-    const { wishlistErrorMessage, wishlistSuccessMessage } =
-        useSelector(state => state.wishlist);
     const { userInfo } =
         useSelector(state => state.auth);
     const [selectedImage, setSelectedImage] = useState(0);
@@ -76,8 +64,7 @@ const DetailsProduct = () => {
             items: 2
         }
     };
-    const discount = 10;
-    const stock = 10;
+
     const [data, setData] = useState('reviews');
 
     const inc = () => {
@@ -149,28 +136,6 @@ const DetailsProduct = () => {
     useState(() => {
         dispatch(get_product_details(slug));
     }, []);
-    useEffect(() => {
-        if (errorMessage) {
-            toast.error(errorMessage);
-            dispatch(messageClear());
-        }
-        if (successMessage) {
-            toast.success(successMessage);
-            dispatch(messageClear());
-        }
-    }, [successMessage, errorMessage, dispatch]);
-
-    useEffect(() => {
-        if (wishlistErrorMessage) {
-            toast.error(wishlistErrorMessage);
-            dispatch(wishListMessageClear());
-        }
-        if (wishlistSuccessMessage) {
-            toast.success(wishlistSuccessMessage);
-            dispatch(wishListMessageClear());
-        }
-    }, [wishlistSuccessMessage, wishlistErrorMessage, dispatch]);
-
 
     return (
         <div>
@@ -276,7 +241,7 @@ const DetailsProduct = () => {
                                     {/* increment, decrease buttons and whilist button */}
                                     <div className='flex gap-3 pb-10 border-b'>
                                         {
-                                            stock ? <>
+                                            product.stock ? <>
                                                 <div className='flex bg-slate-200 h-[50px] justify-center items-center text-xl'>
                                                     <div className='px-6 cursor-pointer' onClick={desc}>-</div>
                                                     <div className='px-6 cursor-pointer'>{quantity}</div>
@@ -301,7 +266,7 @@ const DetailsProduct = () => {
                                         </div>
                                         <div className='flex flex-col gap-5'>
                                             <span className={`text-${product.stock ? 'green' : 'red'}-500`}>
-                                                {stock ? `In Stock (${product.stock})` : 'Out of Stock'}
+                                                {product.stock ? `In Stock (${product.stock})` : 'Out of Stock'}
                                             </span>
                                             {/* social network buttons */}
                                             <ul className='flex justify-start items-center gap-3'>

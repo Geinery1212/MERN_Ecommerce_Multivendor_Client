@@ -34,7 +34,7 @@ export const get_wishlist = createAsyncThunk(
     'wishlist/get-all',
     async (_, { rejectWithValue, fulfillWithValue }) => {
         try {
-            const { data } = await api.get(`/customer/wishlist/get-all`, { withCredentials: true });                        
+            const { data } = await api.get(`/customer/wishlist/get-all`, { withCredentials: true });
             return fulfillWithValue(data);
         } catch (error) {
             console.error(error);
@@ -55,6 +55,12 @@ export const wishlistReducer = createSlice({
         wishListMessageClear: (state, _) => {
             state.wishlistErrorMessage = '';
             state.wishlistSuccessMessage = '';
+        },
+        resetWishlist: (state, _) => {
+            state.wishlist = [];
+            state.wishlist_count = 0;
+            state.wishlistErrorMessage = '';
+            state.wishlistSuccessMessage = '';
         }
     },
     extraReducers: (builder) => {
@@ -63,23 +69,23 @@ export const wishlistReducer = createSlice({
                 state.wishlistErrorMessage = payload.error;
             }).addCase(add_wishlist.fulfilled, (state, { payload }) => {
                 state.wishlistSuccessMessage = payload.message;
-                state.wishlist_count = state.wishlist_count > 0 ? state.wishlist_count + 1 : 1   
+                state.wishlist_count = state.wishlist_count > 0 ? state.wishlist_count + 1 : 1
             })
 
             .addCase(get_wishlist.rejected, (state, { payload }) => {
                 state.wishlistErrorMessage = payload.error;
             }).addCase(get_wishlist.fulfilled, (state, { payload }) => {
-                state.wishlist = payload.wishlist;  
-                state.wishlist_count = state.wishlist.length;              
+                state.wishlist = payload.wishlist;
+                state.wishlist_count = state.wishlist.length;
             })
 
             .addCase(delete_wishlist.rejected, (state, { payload }) => {
                 state.wishlistErrorMessage = payload.error;
             }).addCase(delete_wishlist.fulfilled, (state, { payload }) => {
                 state.wishlistSuccessMessage = payload.message;
-                state.wishlist_count = state.wishlist_count > 0 ? state.wishlist_count - 1 : 0                
+                state.wishlist_count = state.wishlist_count > 0 ? state.wishlist_count - 1 : 0
             })
     }
 });
-export const { wishListMessageClear } = wishlistReducer.actions;
+export const { wishListMessageClear, resetWishlist } = wishlistReducer.actions;
 export default wishlistReducer.reducer;

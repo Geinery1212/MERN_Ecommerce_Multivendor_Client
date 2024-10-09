@@ -23,7 +23,7 @@ export const get_cart_products = createAsyncThunk(
         try {
             // console.log(userId);
             const { data } = await api.get(`/customer/cart/get_products/${userId}`, { withCredentials: true });
-            console.log(data);
+            // console.log(data);
             return fulfillWithValue(data);
         } catch (error) {
             console.error(error);
@@ -50,9 +50,9 @@ export const quantity_inc = createAsyncThunk(
     async (cartId, { rejectWithValue, fulfillWithValue }) => {
         try {
             const { data } = await api.put(
-                `/customer/cart/quantity-inc`,  
-                {cartId},                                      
-                { withCredentials: true }                
+                `/customer/cart/quantity-inc`,
+                { cartId },
+                { withCredentials: true }
             );
             return fulfillWithValue(data);
         } catch (error) {
@@ -67,9 +67,9 @@ export const quantity_dec = createAsyncThunk(
     async (cartId, { rejectWithValue, fulfillWithValue }) => {
         try {
             const { data } = await api.put(
-                `/customer/cart/quantity-dec`,  
-                {cartId},                                      
-                { withCredentials: true }                
+                `/customer/cart/quantity-dec`,
+                { cartId },
+                { withCredentials: true }
             );
             return fulfillWithValue(data);
         } catch (error) {
@@ -85,9 +85,7 @@ export const cartReducer = createSlice({
         successMessage: '',
         errorMessage: '',
         cart_products: [],
-        cart_products_count: 0,//All the products, even if they are out of stock
-        wishlist: [],
-        wishlist_count: 0,
+        cart_products_count: 0,//All the products, even if they are out of stock               
         price: 0,//Total price with discount applied, if there is
         shipping_fee: 0,
         outofstock_products: [],
@@ -97,6 +95,16 @@ export const cartReducer = createSlice({
         messageClear: (state, _) => {
             state.errorMessage = '';
             state.successMessage = '';
+        },
+        resetCart: (state, _) => {
+            state.successMessage = '';
+            state.errorMessage = '';
+            state.cart_products = [];            
+            state.cart_products_count = 0;
+            state.price = 0;
+            state.shipping_fee = 0;
+            state.outofstock_products = [];
+            state.buy_product_items = 0;
         }
     },
     extraReducers: (builder) => {
@@ -121,21 +129,21 @@ export const cartReducer = createSlice({
             .addCase(delete_cart_product.rejected, (state, { payload }) => {
                 state.errorMessage = payload.error;
             }).addCase(delete_cart_product.fulfilled, (state, { payload }) => {
-                state.successMessage = payload.message;                
+                state.successMessage = payload.message;
             })
 
             .addCase(quantity_inc.rejected, (state, { payload }) => {
                 state.errorMessage = payload.error;
             }).addCase(quantity_inc.fulfilled, (state, { payload }) => {
-                state.successMessage = payload.message;                
+                state.successMessage = payload.message;
             })
 
             .addCase(quantity_dec.rejected, (state, { payload }) => {
                 state.errorMessage = payload.error;
             }).addCase(quantity_dec.fulfilled, (state, { payload }) => {
-                state.successMessage = payload.message;                
+                state.successMessage = payload.message;
             })
     }
 });
-export const { messageClear } = cartReducer.actions;
+export const { messageClear, resetCart } = cartReducer.actions;
 export default cartReducer.reducer;

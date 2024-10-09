@@ -2,14 +2,33 @@ import React, { useState } from 'react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { FaList } from 'react-icons/fa'
-import { Link, Outlet } from 'react-router-dom'
+import { Link, Outlet, useNavigate } from 'react-router-dom'
 import { IoIosHome, IoIosLogOut } from 'react-icons/io'
 import { LuFolderHeart } from "react-icons/lu";
 import { RiLockPasswordLine, RiTodoLine } from 'react-icons/ri'
 import { IoChatbubblesOutline } from "react-icons/io5";
+import api from '../connection/api'
+import { useDispatch } from 'react-redux'
+import { resetUserData } from '../store/reducers/authReducer'
+import { resetCart } from '../store/reducers/cartReducer'
+import { resetWishlist } from '../store/reducers/wishlistReducer'
 
 const Dashboard = () => {
     const [filterShow, setFilterShow] = useState(false);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const logout = async () => {
+        try {
+            const { data } = await api.get('/customer/logout', { withCredentials: true });
+            console.log(data);
+            dispatch(resetUserData());
+            dispatch(resetCart());
+            dispatch(resetWishlist());
+            navigate('/login')
+        } catch (error) {
+            console.error(error);
+        }
+    }
     return (
         <div>
             <Header />
@@ -43,9 +62,9 @@ const Dashboard = () => {
                                     <span className='text-xl'><RiLockPasswordLine /></span>
                                     <Link to={'/dashboard/change-password'} className='block'>Change Password</Link>
                                 </li>
-                                <li className='flex justify-start items-center gap-2 py-2'>
+                                <li onClick={logout} className='flex justify-start items-center gap-2 py-2 cursor-pointer'>
                                     <span className='text-xl'><IoIosLogOut /></span>
-                                    <Link to={'/dashboard'} className='block'>Logout</Link>
+                                    <div className='block'>Logout</div>
                                 </li>
                             </ul>
                         </div>
