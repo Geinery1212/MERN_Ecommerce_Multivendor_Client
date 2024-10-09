@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { AiOutlineMessage, AiOutlinePlus } from 'react-icons/ai'
 import { GrEmoji } from 'react-icons/gr'
 import { IoSend } from 'react-icons/io5'
@@ -7,8 +7,9 @@ import userImage from '../../assets/images/user.png'
 import { useDispatch, useSelector } from 'react-redux';
 import { io } from 'socket.io-client';
 import { socket_connection } from '../../connection/global';
-import { add_friend_seller, send_message } from '../../store/reducers/chatReducer';
+import { add_friend_seller, addNewMessage, chatMessageClear, send_message } from '../../store/reducers/chatReducer';
 import { FadeLoader } from 'react-spinners';
+import toast from 'react-hot-toast';
 const Chat = () => {
     const dispatch = useDispatch();
     const [newMessageText, setNewMessageText] = useState('');
@@ -17,9 +18,43 @@ const Chat = () => {
     const { sellerId } = useParams();
     const { userInfo } = useSelector(state => state.auth);
     const { chatLoader, chatSuccessMessage, chatErrorMessage, myFriends, friendMessages, currentFriend } = useSelector(state => state.chat);
-    const socket = io(socket_connection);
+    const scrollRef = useRef();
+    const socketRef = useRef(null);
 
-    const send = () => {
+    useEffect(() => {
+        socketRef.current = io(socket_connection); 
+
+        if (userInfo) {
+            socketRef.current.emit('add_customer', userInfo);
+        }
+
+        socketRef.current.on('seller_message', msg => {
+            setNewMessageReceived(msg);
+        });
+
+        socketRef.current.on('activeSellers', allSellers => {
+            setAllSellersActive(allSellers);
+        });
+
+        socketRef.current.on('connect_error', (err) => {
+            console.error('Connection error:', err);
+        });
+
+        return () => {
+            socketRef.current.disconnect(); // Disconnect the socket on cleanup
+        };
+    }, []); // Depend on userInfo
+
+    useEffect(() => {
+        if (chatSuccessMessage !== '' && friendMessages.length > 0) {
+            const lastMessage = friendMessages[friendMessages.length - 1];
+            socketRef.current.emit('send_customer_message', lastMessage);
+            dispatch(chatMessageClear());
+        }
+    }, [chatSuccessMessage, friendMessages]);
+
+    const send = (e) => {
+        e.preventDefault();
         if (newMessageText) {
             dispatch(send_message({
                 userId: userInfo.id,
@@ -27,34 +62,41 @@ const Chat = () => {
                 sellerId,
                 name: userInfo.name
             }));
-            setNewMessageText('');
+            setNewMessageText(''); 
         }
-    }
-    useEffect(() => {
-        socket.emit('add_user', userInfo);
-    }, [sellerId, socket, userInfo]);
+    };
 
     useEffect(() => {
         if (userInfo) {
             dispatch(add_friend_seller({
-                'sellerId': sellerId || "",
-                'userId': userInfo.id
+                sellerId: sellerId || "",
+                userId: userInfo.id
             }));
         }
-    }, [dispatch, sellerId, userInfo]);
+    }, [sellerId, userInfo]);
 
     useEffect(() => {
-        socket.on('seller_message', msg => {
-            console.log('this is the data sended')
-            setNewMessageReceived(msg);
-            console.log(msg);
-        });
-        socket.on('activeSellers', allSellers => {
-            setAllSellersActive(allSellers);
-            console.log('all sellers');
-            console.log(allSellers);
-        });
-    }, [socket]);
+        if (newMessageReceived && newMessageReceived.senderName) {            
+            if (newMessageReceived.senderId === sellerId && newMessageReceived.receiverId === userInfo.id) {
+                dispatch(addNewMessage(newMessageReceived));
+            } else {
+                toast.success(`${newMessageReceived.senderName} sent a message`);
+                dispatch(chatMessageClear());
+            }
+        }
+    }, [newMessageReceived]);
+
+    useEffect(() => {
+        if (scrollRef.current) {
+            const offset = 0; 
+            const container = scrollRef.current.parentElement; 
+            container.scroll({
+                top: container.scrollHeight - container.clientHeight - offset,
+                behavior: 'smooth'
+            });
+        }
+    }, [friendMessages]);
+
     return (
         <div>
             {
@@ -112,7 +154,7 @@ const Chat = () => {
 
 
                                                     return (
-                                                        <div key={i} className={`w-full flex gap-2 justify-${isSender ? 'end' : 'start'} items-center text-[14px]`}>
+                                                        <div key={i} ref={scrollRef} className={`w-full flex gap-2 justify-${isSender ? 'end' : 'start'} items-center text-[14px]`}>
                                                             <img className='w-[30px] h-[30px]' src={isSender ?
                                                                 senderImage !== '' ? senderImage : userImage
                                                                 : receiverImage !== '' ? receiverImage : userImage} alt="" />
@@ -125,7 +167,7 @@ const Chat = () => {
                                             }
                                         </div>
                                     </div>
-                                    <div className='flex p-2 justify-between items-center w-full'>
+                                    <form className='flex p-2 justify-between items-center w-full' onSubmit={send}>
                                         <div className='w-[40px] h-[40px] border p-2 justify-center items-center flex rounded-full'>
                                             <label className='cursor-pointer' htmlFor=""><AiOutlinePlus /></label>
                                             <input className='hidden' type="file" />
@@ -136,12 +178,12 @@ const Chat = () => {
                                                 <span><GrEmoji /></span>
                                             </div>
                                         </div>
-                                        <div onClick={send} className='w-[40px] p-2 justify-center items-center rounded-full'>
-                                            <div className='text-2xl cursor-pointer'>
+                                        <div className='w-[40px] p-2 justify-center items-center rounded-full'>
+                                            <button className='text-2xl cursor-pointer'>
                                                 <IoSend />
-                                            </div>
+                                            </button>
                                         </div>
-                                    </div>
+                                    </form>
                                 </div> : <div className='w-full h-full flex justify-center items-center text-lg ont-bold text-slate-600'>
                                     <span>select seller</span>
                                 </div>
