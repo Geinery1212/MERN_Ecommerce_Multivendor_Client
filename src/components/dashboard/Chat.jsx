@@ -4,6 +4,7 @@ import { GrEmoji } from 'react-icons/gr'
 import { IoSend } from 'react-icons/io5'
 import { Link, useParams } from 'react-router-dom'
 import userImage from '../../assets/images/user.png'
+import demoImage from '../../assets/images/admin.png'
 import { useDispatch, useSelector } from 'react-redux';
 import { io } from 'socket.io-client';
 import { socket_connection } from '../../connection/global';
@@ -116,7 +117,7 @@ const Chat = () => {
                                         return <Link key={i} to={`/dashboard/chat/${friend.fdId}`} className={`flex gap-2 justify-start items-center pl-2 py-[5px]`} >
                                             <div className='w-[30px] h-[30px] rounded-full relative'>
                                                 {allSellersActive.some((s) => s.sellerId === friend.fdId) && <div className='w-[10px] h-[10px] rounded-full bg-green-500 absolute right-0 bottom-0'></div>}
-                                                <img src={friend.image} alt="" />
+                                                <img src={friend.image ? friend.image : demoImage} alt="" />
                                             </div>
                                             <span>{friend.name}</span>
                                         </Link>
@@ -132,7 +133,7 @@ const Chat = () => {
                                     <div className='flex justify-start gap-3 items-center text-slate-600 text-xl h-[50px]'>
                                         <div className='w-[30px] h-[30px] rounded-full relative'>
                                             {allSellersActive.some(s => s.sellerId === currentFriend.fdId) && <div className='w-[10px] h-[10px] rounded-full bg-green-500 absolute right-0 bottom-0'></div>}
-                                            {currentFriend.image !== '' ? <img src={currentFriend.image} alt="" /> : <img src={userImage} alt="" />}
+                                            {currentFriend.image !== '' ? <img src={currentFriend.image} alt="" /> : <img src={demoImage} alt="" />}
                                         </div>
                                         <span>{currentFriend.name}</span>
                                     </div>
@@ -157,7 +158,7 @@ const Chat = () => {
                                                         <div key={i} ref={scrollRef} className={`w-full flex gap-2 justify-${isSender ? 'end' : 'start'} items-center text-[14px]`}>
                                                             <img className='w-[30px] h-[30px]' src={isSender ?
                                                                 senderImage !== '' ? senderImage : userImage
-                                                                : receiverImage !== '' ? receiverImage : userImage} alt="" />
+                                                                : receiverImage !== '' ? receiverImage : demoImage} alt="" />
                                                             <div className={`p-2 rounded-md ${isSender ? 'bg-purple-500' : isRecipient ? 'bg-cyan-500' : 'bg-gray-300'}`}>
                                                                 <span>{msg.message}</span>
                                                             </div>

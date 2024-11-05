@@ -12,6 +12,7 @@ import { useDispatch } from 'react-redux'
 import { resetUserData } from '../store/reducers/authReducer'
 import { resetCart } from '../store/reducers/cartReducer'
 import { resetWishlist } from '../store/reducers/wishlistReducer'
+import toast from 'react-hot-toast'
 
 const Dashboard = () => {
     const [filterShow, setFilterShow] = useState(false);
@@ -20,7 +21,7 @@ const Dashboard = () => {
     const logout = async () => {
         try {
             const { data } = await api.get('/customer/logout', { withCredentials: true });
-            console.log(data);
+            toast.success('sdfd');
             dispatch(resetUserData());
             dispatch(resetCart());
             dispatch(resetWishlist());
