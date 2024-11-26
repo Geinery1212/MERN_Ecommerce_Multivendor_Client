@@ -11,11 +11,13 @@ import { socket_connection } from '../../connection/global';
 import { add_friend_seller, addNewMessage, chatMessageClear, send_message } from '../../store/reducers/chatReducer';
 import { FadeLoader } from 'react-spinners';
 import toast from 'react-hot-toast';
+import { FaList } from "react-icons/fa";
 const Chat = () => {
     const dispatch = useDispatch();
     const [newMessageText, setNewMessageText] = useState('');
     const [newMessageReceived, setNewMessageReceived] = useState({});
     const [allSellersActive, setAllSellersActive] = useState([]);
+    const [showUsers, setShowUsers] = useState(false);
     const { sellerId } = useParams();
     const { userInfo } = useSelector(state => state.auth);
     const { chatLoader, chatSuccessMessage, chatErrorMessage, myFriends, friendMessages, currentFriend } = useSelector(state => state.chat);
@@ -23,7 +25,7 @@ const Chat = () => {
     const socketRef = useRef(null);
 
     useEffect(() => {
-        socketRef.current = io(socket_connection); 
+        socketRef.current = io(socket_connection);
 
         if (userInfo) {
             socketRef.current.emit('add_customer', userInfo);
@@ -63,7 +65,7 @@ const Chat = () => {
                 sellerId,
                 name: userInfo.name
             }));
-            setNewMessageText(''); 
+            setNewMessageText('');
         }
     };
 
@@ -77,7 +79,7 @@ const Chat = () => {
     }, [sellerId, userInfo]);
 
     useEffect(() => {
-        if (newMessageReceived && newMessageReceived.senderName) {            
+        if (newMessageReceived && newMessageReceived.senderName) {
             if (newMessageReceived.senderId === sellerId && newMessageReceived.receiverId === userInfo.id) {
                 dispatch(addNewMessage(newMessageReceived));
             } else {
@@ -89,8 +91,8 @@ const Chat = () => {
 
     useEffect(() => {
         if (scrollRef.current) {
-            const offset = 0; 
-            const container = scrollRef.current.parentElement; 
+            const offset = 0;
+            const container = scrollRef.current.parentElement;
             container.scroll({
                 top: container.scrollHeight - container.clientHeight - offset,
                 behavior: 'smooth'
@@ -106,7 +108,7 @@ const Chat = () => {
                     <FadeLoader />
                 </div> : <div className='bg-white p-3 rounded-md'>
                     <div className='w-full flex'>
-                        <div className='w-[230px]'>
+                        <div className={`w-[230px] md-lg:absolute bg-white md-lg:h-400px ${showUsers ? '-left-[0px]' : '-left-[350px]'}`}>
                             <div className='flex justify-center gap-3 items-center text-slate-600 text-xl h-[50px]'>
                                 <span><AiOutlineMessage /></span>
                                 <span>Message</span>
@@ -114,7 +116,7 @@ const Chat = () => {
                             <div className='w-full flex flex-col text-slate-600 py-4 h-[400px] pr-3'>
                                 {
                                     myFriends && myFriends.map((friend, i) => {
-                                        return <Link key={i} to={`/dashboard/chat/${friend.fdId}`} className={`flex gap-2 justify-start items-center pl-2 py-[5px]`} >
+                                        return <Link key={i} onClick={()=>setShowUsers(false)} to={`/dashboard/chat/${friend.fdId}`} className={`flex gap-2 justify-start items-center pl-2 py-[5px]`} >
                                             <div className='w-[30px] h-[30px] rounded-full relative'>
                                                 {allSellersActive.some((s) => s.sellerId === friend.fdId) && <div className='w-[10px] h-[10px] rounded-full bg-green-500 absolute right-0 bottom-0'></div>}
                                                 <img src={friend.image ? friend.image : demoImage} alt="" />
@@ -127,15 +129,20 @@ const Chat = () => {
 
                             </div>
                         </div>
-                        <div className='w-[calc(100%-230px)]'>
+                        <div className='w-[calc(100%-230px)] md-lg:w-full'>
                             {
                                 currentFriend ? <div className='w-full h-full'>
-                                    <div className='flex justify-start gap-3 items-center text-slate-600 text-xl h-[50px]'>
-                                        <div className='w-[30px] h-[30px] rounded-full relative'>
-                                            {allSellersActive.some(s => s.sellerId === currentFriend.fdId) && <div className='w-[10px] h-[10px] rounded-full bg-green-500 absolute right-0 bottom-0'></div>}
-                                            {currentFriend.image !== '' ? <img src={currentFriend.image} alt="" /> : <img src={demoImage} alt="" />}
+                                    <div className='flex justify-between gap-3 items-center text-slate-600 text-xl h-[50px]'>
+                                        <div className='flex gap-2'>
+                                            <div className='w-[30px] h-[30px] rounded-full relative'>
+                                                {allSellersActive.some(s => s.sellerId === currentFriend.fdId) && <div className='w-[10px] h-[10px] rounded-full bg-green-500 absolute right-0 bottom-0'></div>}
+                                                {currentFriend.image !== '' ? <img src={currentFriend.image} alt="" /> : <img src={demoImage} alt="" />}
+                                            </div>
+                                            <span>{currentFriend.name}</span>
                                         </div>
-                                        <span>{currentFriend.name}</span>
+                                        <div onClick={() => setShowUsers(!showUsers)} className='w-[35px] h-[35px] hidden md-lg:flex cursor-pointer rounded-sm justify-center items-center bg-sky-500 text-white'>
+                                            <FaList />
+                                        </div>
                                     </div>
                                     <div className='h-[400px] w-full bg-slate-100 p-3 rounded-md'>
                                         <div className='w-full h-full overflow-y-auto flex flex-col gap-3'>
@@ -185,7 +192,7 @@ const Chat = () => {
                                             </button>
                                         </div>
                                     </form>
-                                </div> : <div className='w-full h-full flex justify-center items-center text-lg ont-bold text-slate-600'>
+                                </div> : <div onClick={()=>setShowUsers(!showUsers)} className={`w-full h-full md-lg:h-[450px] ${!showUsers && 'cursor-pointer'} flex justify-center items-center text-lg ont-bold text-slate-600`}>
                                     <span>select seller</span>
                                 </div>
                             }

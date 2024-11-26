@@ -32,8 +32,12 @@ const Header = () => {
     const { wishlistErrorMessage, wishlistSuccessMessage } =
         useSelector(state => state.wishlist);
     const search = (e) => {
+        e.preventDefault();
         navigate(`/products/search?searchValue=${searchValue}&category=${category}`)
     }
+    useEffect(()=>{
+        setCategory(false);
+    }, [category])
     const redirect_to_cart = () => {
         if (userInfo) {
             navigate('/cart')
@@ -248,7 +252,7 @@ after:bg-[#afafaf] after:-right-[16px]'>
                                                     <span><FaUser /></span>
                                                     <span>{userInfo.name}</span>
                                                 </Link>
-                                                : <Link className='flex cursor-pointer justify-center items-center gap-2 text-sm text-black' to={'/dashboard'}>
+                                                : <Link className='flex cursor-pointer justify-center items-center gap-2 text-sm text-black' to={'/login'}>
                                                     <span><FaLock /></span>
                                                     <span>Login</span>
                                                 </Link>
@@ -258,7 +262,7 @@ after:bg-[#afafaf] after:-right-[16px]'>
                                     <ul className='flex flex-col justify-start items-start text-sm font-bold
                             uppercase'>
                                         <li>
-                                            <Link className={`py-2 block ${pathname === '/' ? 'text-[#059473]'
+                                            <Link to={'/'} className={`py-2 block ${pathname === '/' ? 'text-[#059473]'
                                                 : 'text-slate-600'
                                                 }`}>Home</Link>
                                         </li>
@@ -333,7 +337,7 @@ after:bg-[#afafaf] after:-right-[16px]'>
                                             (categories && categories.length > 0) && categories.map((category, index) => {
                                                 return <li key={index} className='flex justify-start items-center gap-2 px-[24px] py-[6px]'>
                                                     <img src={category.image} alt="Category" className='w-[30px] h-[30px] rounded-full overflow-hidden' />
-                                                    <Link to={`/products?category=${category.name}`} className='text-sm block'>{category.name}</Link></li>
+                                                    <Link to={`/products?category=${category.name}`} onClick={()=>setCategory(category.name)} className='text-sm block'>{category.name}</Link></li>
                                             })
                                         }
                                     </ul>
@@ -343,7 +347,7 @@ after:bg-[#afafaf] after:-right-[16px]'>
                         <div className='w-9/12 md-lg:pl-0 md-lg:w-full pl-8'>
                             <div className='flex flex-wrap w-full justify-between items-center md-lg:gap-6'>
                                 <div className='w-8/12 md-lg:w-full'>
-                                    <div className='flex border h-[50px] items-center relative gap-6'>
+                                    <form onSubmit={search} className='flex border h-[50px] items-center relative gap-6'>
                                         <div className='relative after:absolute after:h-[25px] after:w-[1px] after:bg-[#afafaf] after:-right-[15px] md:hidden'>
                                             <select name="" id="" className='w-[150px] text-slate-600 font-semibold bg-transparent px-2 h-full outline-0 border-none' onChange={(e) => setCategory(e.target.value)}>
                                                 <option value="">Select Category</option>
@@ -356,10 +360,10 @@ after:bg-[#afafaf] after:-right-[16px]'>
                                         </div>
                                         <input type="text" onChange={(e) => setSearchValue(e.target.value)} placeholder='What do you need?' className='w-full relative bg-transparent
                                                 text-slate-500 outline-0 px-3 h-full' />
-                                        <button onClick={search} className='bg-[#059473] right-0 absolute px-8 h-full font-semibold uppercase text-white'>
+                                        <button className='bg-[#059473] right-0 absolute px-8 h-full font-semibold uppercase text-white'>
                                             Search
                                         </button>
-                                    </div>
+                                    </form>
                                 </div>
                                 <div className='w-4/12 block md-lg:hidden pl-2 md-lg:w-full md-lg:pl-0'>
                                     {/* phone support */}

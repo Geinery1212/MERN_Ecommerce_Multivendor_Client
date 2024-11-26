@@ -73,7 +73,7 @@ export const get_product_details = createAsyncThunk(
     'home/get_product_details',
     async (slug, { rejectWithValue, fulfillWithValue }) => {
         try {
-            const { data } = await api.get(`/customer/get-product-detail/${slug}`);            
+            const { data } = await api.get(`/customer/get-product-detail/${slug}`);
             return fulfillWithValue(data);
         } catch (error) {
             console.error(error);
@@ -112,10 +112,20 @@ export const homeReducer = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(get_categories.fulfilled, (state, { payload }) => {
+        .addCase(get_categories.pending, (state) => {
+            state.loader = true;
+        }).addCase(get_categories.rejected, (state) => {
+            state.loader = true;
+        }).addCase(get_categories.fulfilled, (state, { payload }) => {
                 state.categories = payload.categories
             })
-            .addCase(get_products.fulfilled, (state, { payload }) => {
+
+            .addCase(get_products.pending, (state) => {
+                state.loader = true;
+            }).addCase(get_products.rejected, (state) => {
+                state.loader = false;
+            }).addCase(get_products.fulfilled, (state, { payload }) => {
+                state.loader = false;
                 state.products = payload.products
                 state.totalProducts = payload.products.length
                 state.discount_products = payload.discount_products
@@ -123,20 +133,27 @@ export const homeReducer = createSlice({
                 state.topRated_products = payload.topRated_products
             })
 
-            .addCase(price_range_product.fulfilled, (state, { payload }) => {
+            .addCase(price_range_product.pending, (state) => {
+                state.loader = true;
+            }).addCase(price_range_product.rejected, (state) => {
+                state.loader = false;
+            }).addCase(price_range_product.fulfilled, (state, { payload }) => {
+                state.loader = false;
                 state.latest_products = payload.latest_products
                 state.priceRange = payload.priceRange
             })
 
-            .addCase(filter_products.fulfilled, (state, { payload }) => {
+            .addCase(filter_products.fulfilled, (state, { payload }) => {                
                 state.products = payload.products
                 state.perPage = payload.perPage
                 state.totalProducts = payload.totalProducts
             })
-            .addCase(get_product_details.pending, (state, { payload }) => {
+
+            .addCase(get_product_details.pending, (state) => {
                 state.loader = true
-            })
-            .addCase(get_product_details.fulfilled, (state, { payload }) => {
+            }).addCase(get_product_details.rejected, (state) => {
+                state.loader = true
+            }).addCase(get_product_details.fulfilled, (state, { payload }) => {
                 state.product = payload.product
                 state.relatedProducts = payload.relatedProducts
                 state.moreProducts = payload.moreProducts

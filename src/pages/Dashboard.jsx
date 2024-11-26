@@ -45,23 +45,23 @@ const Dashboard = () => {
                             <ul className='py-2 text-slate-600 px-4'>
                                 <li className='flex justify-start items-center gap-2 py-2'>
                                     <span className='text-xl'><IoIosHome /></span>
-                                    <Link to={'/dashboard'} className='block'>Dashboard</Link>
+                                    <Link to={'/dashboard'} onClick={()=>setFilterShow(false)} className='block'>Dashboard</Link>
                                 </li>
                                 <li className='flex justify-start items-center gap-2 py-2'>
                                     <span className='text-xl'><RiTodoLine /></span>
-                                    <Link to={'/dashboard/my-orders'} className='block'>My Orders</Link>
+                                    <Link to={'/dashboard/my-orders'} onClick={()=>setFilterShow(false)} className='block'>My Orders</Link>
                                 </li>
                                 <li className='flex justify-start items-center gap-2 py-2'>
                                     <span className='text-xl'><LuFolderHeart /></span>
-                                    <Link to={'/dashboard/wishlist'} className='block'>Wishlist</Link>
+                                    <Link to={'/dashboard/wishlist'} onClick={()=>setFilterShow(false)} className='block'>Wishlist</Link>
                                 </li>
                                 <li className='flex justify-start items-center gap-2 py-2'>
                                     <span className='text-xl'><IoChatbubblesOutline /></span>
-                                    <Link to={'/dashboard/chat'} className='block'>Chat</Link>
+                                    <Link to={'/dashboard/chat'}  onClick={()=>setFilterShow(false)} className='block'>Chat</Link>
                                 </li>
                                 <li className='flex justify-start items-center gap-2 py-2'>
                                     <span className='text-xl'><RiLockPasswordLine /></span>
-                                    <Link to={'/dashboard/change-password'} className='block'>Change Password</Link>
+                                    <Link to={'/dashboard/change-password'} onClick={()=>setFilterShow(false)} className='block'>Change Password</Link>
                                 </li>
                                 <li onClick={logout} className='flex justify-start items-center gap-2 py-2 cursor-pointer'>
                                     <span className='text-xl'><IoIosLogOut /></span>

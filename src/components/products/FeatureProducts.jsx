@@ -6,14 +6,14 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { add_cart } from '../../store/reducers/cartReducer'
 import MyMoney from '../../utilities/MyMoney';
-import { add_wishlist} from '../../store/reducers/wishlistReducer'
+import { add_wishlist } from '../../store/reducers/wishlistReducer'
 const FeatureProducts = ({ products }) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const formatter = new MyMoney();
     const { userInfo } =
         useSelector(state => state.auth);
-    
+
     const add_to_cart = (product) => {
         if (userInfo) {
             dispatch(add_cart(
@@ -44,7 +44,7 @@ const FeatureProducts = ({ products }) => {
         } else {
             navigate("/login")
         }
-    }   
+    }
     return (
         <div className='w-[85%] flex flex-wrap mx-auto'>
             <div className='w-full'>
@@ -84,7 +84,7 @@ hover:bg-[#059473] hover:text-white hover:rotate-[720deg] transition-all'>
                             <div className='py-3 text-slate-600 px-2'>
                                 <h2 className='font-bold w-full whitespace-normal break-words'>{product.name}</h2>
                                 <div className='flex justify-start items-center gap-3'>
-                                    <span className='text-md font-semibold'>{product.discount > 0 ? formatter.centsToFomattedCurrency(product.price) : formatter.applyDiscountToFormattedCurrency(product.price, product.discount)}</span>
+                                    <span className='text-md font-semibold'>{product.discount > 0 ? formatter.applyDiscountToFormattedCurrency(product.price, product.discount) : formatter.centsToFomattedCurrency(product.price)}</span>
                                     <Rating ratings={product.rating} />
                                 </div>
                             </div>

@@ -2,12 +2,51 @@ import React from 'react';
 import { FaEye, FaRegHeart } from 'react-icons/fa';
 import { RiShoppingCartLine } from 'react-icons/ri';
 import Rating from '../Rating';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import MyMoney from '../../utilities/MyMoney';
+import { Link, useNavigate } from 'react-router-dom';
+import { add_cart } from '../../store/reducers/cartReducer';
+import { add_wishlist } from '../../store/reducers/wishlistReducer';
 const ShopProducts = ({ styles }) => {
     const formatter = new MyMoney();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { userInfo } =
+        useSelector(state => state.auth);
     const { products } =
         useSelector(state => state.home);
+
+    const add_to_cart = (product) => {
+        if (userInfo) {
+            dispatch(add_cart(
+                {
+                    userId: userInfo.id,
+                    productId: product._id,
+                    quantity: 1
+                }
+            ));
+        } else {
+            navigate("/login")
+        }
+    }
+
+    const add_to_wishlist = (product) => {
+        if (userInfo) {
+            dispatch(add_wishlist(
+                {
+                    productId: product._id,
+                    name: product.name,
+                    price: product.price,
+                    image: product.images.length > 0 ? product.images[0] : '',
+                    discount: product.discount,
+                    slug: product.slug
+                }
+
+            ));
+        } else {
+            navigate("/login")
+        }
+    }
     return (
         <div className={`w-full grid ${styles === 'grid' ? 'grid-cols-3 md-lg:grid-cols-2 md:grid-cols-2' : 'grid-cols-1 md-lg:grid-cols-2 md:grid-cols-2'} gap-3`}>
             {products && products.length > 0 && products.map((product, index) => (
@@ -17,13 +56,15 @@ const ShopProducts = ({ styles }) => {
                         <img className='h-[240px] rounded-md md:h-[270px] xs:h-[170px] w-full object-fill' src={product.images[0]} alt={product.name} />
 
                         <ul className='flex transition-all duration-700 -bottom-10 justify-center items-center gap-2 absolute w-full group-hover:bottom-3'>
-                            <li className='w-[38px] h-[38px] cursor-pointer bg-white flex justify-center items-center rounded-full hover:bg-[#059473] hover:text-white hover:rotate-[720deg] transition-all'>
+                            <li onClick={() => add_to_wishlist(product)} className='w-[38px] h-[38px] cursor-pointer bg-white flex justify-center items-center rounded-full hover:bg-[#059473] hover:text-white hover:rotate-[720deg] transition-all'>
                                 <FaRegHeart />
                             </li>
-                            <li className='w-[38px] h-[38px] cursor-pointer bg-white flex justify-center items-center rounded-full hover:bg-[#059473] hover:text-white hover:rotate-[720deg] transition-all'>
-                                <FaEye />
-                            </li>
-                            <li className='w-[38px] h-[38px] cursor-pointer bg-white flex justify-center items-center rounded-full hover:bg-[#059473] hover:text-white hover:rotate-[720deg] transition-all'>
+                            <Link to={`/product/details/${product.slug}`}>
+                                <li className='w-[38px] h-[38px] cursor-pointer bg-white flex justify-center items-center rounded-full hover:bg-[#059473] hover:text-white hover:rotate-[720deg] transition-all'>
+                                    <FaEye />
+                                </li>
+                            </Link>
+                            <li onClick={() => add_to_cart(product)} className='w-[38px] h-[38px] cursor-pointer bg-white flex justify-center items-center rounded-full hover:bg-[#059473] hover:text-white hover:rotate-[720deg] transition-all'>
                                 <RiShoppingCartLine />
                             </li>
                         </ul>

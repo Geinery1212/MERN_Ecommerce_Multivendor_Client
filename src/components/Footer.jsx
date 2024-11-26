@@ -1,8 +1,19 @@
 import React from 'react'
 import logo from '../assets/images/logo.png';
-import { Link } from 'react-router-dom';
-import { FaFacebookF, FaInstagram, FaLinkedin, FaTwitter } from 'react-icons/fa';
+import { Link, useNavigate } from 'react-router-dom';
+import { FaFacebookF, FaHeart, FaInstagram, FaLinkedin, FaTwitter } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
+import { FaCartShopping } from 'react-icons/fa6';
 const Footer = () => {
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { wishlist_count } =
+        useSelector(state => state.wishlist);
+    const { userInfo } =
+        useSelector(state => state.auth);
+    const { cart_products_count } =
+        useSelector(state => state.cart);
+
     return (
         <footer className='bg-[#f3f6fa] w-full'>
             <div className='w-[85%] flex flex-wrap mx-auto border-b py-16 md-lg:pb-10 sm:pb-6'>
@@ -88,6 +99,33 @@ const Footer = () => {
             </div>
             <div className='w-[90%] fkex flex-wrap justify-center items-center text-slate-600 mx-auto py-5 text-center'>
                 <span>2024 EasyShop. All Rights Reserved.</span>
+            </div>
+            <div className='hidden fixed md-lg:block w-[50px] h-[110px] bottom-3 right-2 bg-white rounded-full p-2'>
+                <div className='w-full h-full flex gap-3 flex-col justify-center items-center'>
+                    <div onClick={() => navigate(userInfo ? '/cart' : '/login')} className='relative flex justify-center items-center cursor-pointer w-[35px] h-[35px] rounded-full bg-[#e2e2e2]'>
+                        <span className='text-xl text-green-500'><FaCartShopping /></span>
+                        {
+                            cart_products_count !== 0 && <div className='w-[20px] h-[20px] absolute bg-red-500 rounded-full text-white flex justify-center items-center -top-[3px] -right-[5px]'>
+                                {
+                                    cart_products_count
+                                }
+                            </div>
+                        }
+
+
+                    </div>
+                    <div onClick={() => navigate(userInfo ? '/dashboard/wishlist' : '/login')} className='relative flex justify-center items-center cursor-pointer w-[35px] h-[35px] rounded-full bg-[#e2e2e2]'>
+                        <span className='text-xl text-green-500'><FaHeart /></span>
+                        {
+                            wishlist_count !== 0 && <div className='w-[20px] h-[20px] absolute bg-red-500 rounded-full text-white flex justify-center items-center -top-[3px] -right-[5px]'>
+                                {
+                                    wishlist_count
+                                }
+                            </div>
+                        }
+
+                    </div>
+                </div>
             </div>
         </footer>
     )

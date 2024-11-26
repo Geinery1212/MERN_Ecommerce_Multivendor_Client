@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { IoIosArrowForward } from "react-icons/io";
@@ -133,9 +133,15 @@ const DetailsProduct = () => {
         });
     }
 
-    useState(() => {
+    useEffect(() => {
         dispatch(get_product_details(slug));
-    }, []);
+        // Scroll to the top of the page when slug changes
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }, [dispatch, slug]);
+
 
     return (
         <div>
@@ -216,7 +222,7 @@ const DetailsProduct = () => {
                                 {/* Product description/details */}
                                 <div className='flex flex-col gap-5 mb-6'>
                                     <div className='text-3xl text-slate-600 font-bold'>
-                                        <h3>{product.name}</h3>
+                                        <h3 className='whitespace-normal break-words'>{product.name}</h3>
                                     </div>
                                     <div className='flex justify-start items-center gap-4'>
                                         <div className='flex text-xl'>
@@ -339,7 +345,7 @@ const DetailsProduct = () => {
                                         </div>
                                         <div className='flex flex-col gap-5 mt-3 border p-3'>
                                             {moreProducts.map((element) => (
-                                                <Link className='block' key={element._id}>
+                                                <Link className='block' key={element._id} to={`/product/details/${element.slug}`}>
                                                     <div className='relative h-[270px]'>
                                                         <img src={element.images[0]} alt="" className='w-full h-full' />
                                                         {element.discount > 0 && (
@@ -354,9 +360,7 @@ const DetailsProduct = () => {
                                                         </h2>
                                                         <div className='flex justify-start items-center gap-3'>
                                                             <span className='text-md font-semibold'>
-                                                                {element.discount > 0
-                                                                    ? formatter.centsToFomattedCurrency(element.price)
-                                                                    : formatter.applyDiscountToFormattedCurrency(element.price, element.discount)}
+                                                                {element.discount > 0 ? formatter.applyDiscountToFormattedCurrency(element.price, element.discount) : formatter.centsToFomattedCurrency(element.price)}
                                                             </span>
                                                             <Rating ratings={element.rating} />
                                                         </div>
@@ -399,7 +403,7 @@ const DetailsProduct = () => {
                                     {
                                         relatedProducts.map((element, index) => {
                                             return <SwiperSlide key={index}>
-                                                <Link className='block'>
+                                                <Link className='block' to={`/product/details/${element.slug}`}>
                                                     <div className='relative h-[270px]'>
                                                         <div className='w-full h-full'>
                                                             <img src={element.images[0]} alt="" className='w-full h-full' />
@@ -416,7 +420,7 @@ const DetailsProduct = () => {
                                                     <div className='py-3 text-slate-600 px-2'>
                                                         <h2 className='font-bold w-full whitespace-normal break-words'>{element.name}</h2>
                                                         <div className='flex justify-start items-center gap-3'>
-                                                            <span className='text-md font-semibold'>{element.discount > 0 ? formatter.centsToFomattedCurrency(element.price) : formatter.applyDiscountToFormattedCurrency(element.price, element.discount)}</span>
+                                                            <span className='text-md font-semibold'>{element.discount > 0 ? formatter.applyDiscountToFormattedCurrency(element.price, element.discount) : formatter.centsToFomattedCurrency(element.price)}</span>
                                                             <Rating ratings={element.rating} />
                                                         </div>
                                                     </div>
