@@ -8,7 +8,7 @@ export const place_order = createAsyncThunk(
             const { price, totalPrice, products, shipping_fee, items, shippingInfo, userId, navigate } = info;
             const { data } = await api.post('/customer/order/place_order',
                 { price, products, shipping_fee, items, shippingInfo, userId }, { withCredentials: true });
-
+        console.log(data);
             navigate('/payment', {
                 state: {
                     totalPrice,
@@ -55,6 +55,7 @@ export const orderReducer = createSlice({
     initialState: {
         successMessage: '',
         errorMessage: '',
+        loader: false,
         myOrders: [],
         myOrder: {}
     },
@@ -66,14 +67,19 @@ export const orderReducer = createSlice({
     },
     extraReducers: (builder) => {
         builder
+            .addCase(place_order.pending, (state) => {          
+                state.loader = true;
+            })
             .addCase(place_order.rejected, (state, { payload }) => {
                 state.errorMessage = payload.error;
+                state.loader = false;
             }).addCase(place_order.fulfilled, (state, { payload }) => {
+                state.loader = false;
                 state.successMessage = payload.message;
             }).addCase(get_orders.fulfilled, (state, { payload }) => {
-                state.myOrders = payload.orders;                
+                state.myOrders = payload.orders;
             }).addCase(get_order.fulfilled, (state, { payload }) => {
-                state.myOrder = payload.order;                
+                state.myOrder = payload.order;
             })
     }
 });

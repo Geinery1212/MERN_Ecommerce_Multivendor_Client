@@ -113,24 +113,28 @@ const DetailsProduct = () => {
     }
 
     const redirect_to_shipping = (product) => {
-        const obj = [{
-            sellerId: product.sellerId,
-            shopName: product.shopName,
-            price: formatter.applyDiscountToCents(product.price, product.discount) * quantity,
-            products: [{
-                _id: product._id,
-                quantity: quantity,
-                productInfo: product
-            }],
-        }];
-        navigate('/shipping', {
-            state: {
-                cart_products: obj,
-                price: formatter.centsToDineroObject(formatter.applyDiscountToCents(product.price, product.discount) * quantity, 2),
-                shipping_fee: formatter.centsToDineroObject(50, 2),
-                items: 1
-            }
-        });
+        if (userInfo) {
+            const obj = [{
+                sellerId: product.sellerId,
+                shopName: product.shopName,
+                price: formatter.applyDiscountToCents(product.price, product.discount) * quantity,
+                products: [{
+                    _id: product._id,
+                    quantity: quantity,
+                    productInfo: product
+                }],
+            }];
+            navigate('/shipping', {
+                state: {
+                    cart_products: obj,
+                    price: formatter.centsToDineroObject(formatter.applyDiscountToCents(product.price, product.discount) * quantity, 2),
+                    shipping_fee: formatter.centsToDineroObject(50, 2),
+                    items: 1
+                }
+            });
+        } else {
+            navigate('/login');
+        }
     }
 
     useEffect(() => {

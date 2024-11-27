@@ -22,7 +22,7 @@ const Cart = () => {
         outofstock_products,
         buy_product_items } =
         useSelector(state => state.cart);
-    const out_of_stock = [1, 2];
+        
     const redirect_to_shipping = () => {
         navigate('/shipping', {
             state: {
@@ -98,7 +98,7 @@ const Cart = () => {
             <section className='bg-[#eeeeee]'>
                 <div className='w-[85%] lg:w-[90%] md:w-[90%] sm:w-[90%] mx-auto py-16'>
                     {
-                        cart_products.length > 0 || out_of_stock > 0
+                        cart_products.length > 0 || outofstock_products > 0
                             ? <div className='flex flex-wrap'>
                                 <div className='w-[67%] md-lg:w-full'>
                                     <div className='pr-3 md-lg:pr-0'>

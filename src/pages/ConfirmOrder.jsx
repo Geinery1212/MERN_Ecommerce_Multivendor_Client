@@ -5,7 +5,6 @@ import { loadStripe } from '@stripe/stripe-js'
 import { BASE_URL_API, PUBLIC_KEY_STRIPE } from '../connection/global';
 import error from '../assets/images/error.png';
 import success from '../assets/images/success.png';
-import axios from 'axios';
 import api from '../connection/api';
 const load = async () => {
     return await loadStripe(PUBLIC_KEY_STRIPE);

@@ -14,6 +14,9 @@ const FeatureProducts = ({ products }) => {
     const { userInfo } =
         useSelector(state => state.auth);
 
+        const { loader } =
+        useSelector(state => state.order);
+
     const add_to_cart = (product) => {
         if (userInfo) {
             dispatch(add_cart(
