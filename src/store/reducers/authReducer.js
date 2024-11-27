@@ -33,6 +33,21 @@ export const customer_login = createAsyncThunk(
     }
 );
 
+export const change_password = createAsyncThunk(
+    'auth/change_password',
+    async (info, { rejectWithValue, fulfillWithValue }) => {
+        console.log(info);
+        try {
+            const { data } = await api.put('/customer/change-password', info, { withCredentials: true });
+
+            return fulfillWithValue(data);
+        } catch (error) {
+            console.error(error);
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
 
 const decodeToken = (token) => {
     if (token) {
@@ -61,7 +76,7 @@ export const authReducer = createSlice({
             state.errorMessage = '';
             state.successMessage = '';
         },
-        resetUserData: (state, _)=>{
+        resetUserData: (state, _) => {
             state.errorMessage = '';
             state.successMessage = '';
             state.userInfo = '';
@@ -98,6 +113,16 @@ export const authReducer = createSlice({
                 state.successMessage = payload.message;
                 state.token = payload.token;
                 state.userInfo = userInfo;
+            })
+
+            .addCase(change_password.pending, (state) => {
+                state.loader = true;
+            }).addCase(change_password.rejected, (state, { payload }) => {
+                state.loader = false;
+                state.errorMessage = payload.error;
+            }).addCase(change_password.fulfilled, (state, { payload }) => {
+                state.loader = false;
+                state.successMessage = payload.message;
             })
     }
 });
