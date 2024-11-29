@@ -2,6 +2,37 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Project Information
+
+This project was last executed with the following environment configurations:
+
+### Node.js
+- **Version:** 18.18.2
+
+### React
+- **React Version:** 18.3.1
+- **Package Manager:** npm 9.8.1
+- **Operating System:** Windows 64-bit
+
+### React Packages and Dependencies
+| Package                     | Version    |
+|-----------------------------|------------|
+| @reduxjs/toolkit            | 2.2.7      |
+| @stripe/react-stripe-js     | 2.8.1      |
+| react-dom                   | 18.3.1     |
+| react-hot-toast             | 2.4.1      |
+| react-icons                 | 5.2.1      |
+| react-range                 | 1.9.2      |
+| react-rating                | 2.0.5      |
+| react-redux                 | 9.1.2      |
+| react-router-dom            | 6.26.0     |
+| react-scripts               | 5.0.1      |
+| react-spinners              | 0.14.1     |
+
+### Notes
+- **React Core Version:** All dependencies use React version 18.3.1.
+- **Operating System:** Ensure your system is Windows 64-bit for compatibility with the above configuration.
+
 ## Available Scripts
 
 In the project directory, you can run:
